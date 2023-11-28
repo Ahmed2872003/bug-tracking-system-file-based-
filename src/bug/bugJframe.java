@@ -393,10 +393,26 @@ public class bugJframe extends javax.swing.JFrame {
                 
                 Files.copy(srcImgPath, destImgPath);
                 
+                dataTypes.User developerDetails = new UserF().getByID(assignedDevId);
+                dataTypes.User testerDatails = ((dataTypes.User) SessionStorage.getData());
+                
                 JOptionPane.showMessageDialog(this, "Added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
                 
                 // Send email to inform the developer about Bug details
                 
+                String message = 
+                        "Bug details\n\n" + 
+                        "   ID: "+bug.getId()+
+                        "\n   Name: "+bug.name+
+                        "\n   Type: "+bug.type+
+                        "\n   Priority: "+bug.priority+
+                        "\n   Level: "+bug.level+
+                        "\n   Tester_id: "+testerDatails.getId()+
+                        "\n   Tester_name: "+testerDatails.name+
+                        "\n   CreatedAt: "+bug.createdAt;
+                
+                
+                utils.Email.send(developerDetails.email, "Assigning a bug", message);
                 
                 resetFields();
                 
@@ -418,7 +434,7 @@ public class bugJframe extends javax.swing.JFrame {
             
             String destImgName = imgPathField.getText();
             
-            Path oldPath = Paths.get("Images\\"+bugsTable.getValueAt(bugsTable.getSelectedRow(), 8));
+            Path oldPath = Paths.get("Images\\"+bugsTable.getValueAt(bugsTable.getSelectedRow(), 10));
             
             boolean isImgSame = destImgName.equals(oldPath.getFileName().toString());
             

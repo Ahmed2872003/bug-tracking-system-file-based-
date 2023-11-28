@@ -42,12 +42,15 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
     public static void initTable() {
 
+        int nOfTotalBugs = 0;
+        int nOfCheckedBugs = 0;
+
         removeAllRows();
 
         BugF BugFile = new BugF();
-        
+
         ArrayList<dataTypes.Bug> bugsList = null;
-        
+
         User userData = ((User) SessionStorage.getData());
 
         javax.swing.JTable jTableProjects = project.ProjectsListJFrame.jTable1;
@@ -59,17 +62,25 @@ public class BugsListJFrame extends javax.swing.JFrame {
         try {
             switch (userData.role) {
                 case "Developer": {
-                    bugsList = BugFile.get((bug)-> bug.developer_id.equals(userData.getId()), (bug)-> bug.project_id.equals(projectId));
+                    bugsList = BugFile.get((bug) -> bug.developer_id.equals(userData.getId()), (bug) -> bug.project_id.equals(projectId));
                     break;
                 }
                 default: {
-                    bugsList = BugFile.get((bug)-> bug.project_id.equals(projectId));
+                    bugsList = BugFile.get((bug) -> bug.project_id.equals(projectId));
                 }
             }
 
-            for (dataTypes.Bug bug: bugsList) {
+            for (dataTypes.Bug bug : bugsList) {
+                if (bug.status) {
+                    nOfCheckedBugs++;
+                }
+                nOfTotalBugs++;
                 addTableRow(bug);
             }
+
+            totalBugsJText.setText(String.valueOf(nOfTotalBugs));
+            checkedBugsJText.setText(String.valueOf(nOfCheckedBugs));
+
         } catch (Exception e) {
             messages.JFrameMessage.showErr(e);
         }
@@ -90,7 +101,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         user = userFile.getByID(bug.tester_id);
 
-        if (user!= null) {
+        if (user != null) {
             testerName = user.name;
         }
 
@@ -100,20 +111,28 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-        model.addRow(new Object[]{bug.getId().intValue(), bug.name, bug.type, bug.priority, bug.level, devName, testerName, bug.createdAt, bug.img, bug.status});
+        model.addRow(new Object[]{bug.getId().intValue(), bug.name, bug.type, bug.priority, bug.level, bug.developer_id.intValue(), devName, bug.tester_id.intValue(), testerName, bug.createdAt, bug.img, bug.status});
     }
 
     private void checkAuth() {
         User u = ((User) SessionStorage.getData());
 
+        if (!u.role.equals("Project Manager")) {
+            jPanel2.remove(AdminJPanel);
+        }
+
         switch (u.role) {
             case "Tester": {
-                jPanel2.remove(chStatBtn);
+                bugOperationsJPanel.remove(chStatBtn);
                 break;
             }
             case "Developer": {
-                jPanel2.remove(creatBtn);
-                jPanel2.remove(updateBtn);
+                bugOperationsJPanel.remove(creatBtn);
+                bugOperationsJPanel.remove(updateBtn);
+                break;
+            }
+            case "Project Manager": {
+                jPanel2.remove(bugOperationsJPanel);
                 break;
             }
             default: {
@@ -142,8 +161,14 @@ public class BugsListJFrame extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        creatBtn = new javax.swing.JButton();
+        AdminJPanel = new javax.swing.JPanel();
+        totalBugsJText = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        checkedBugsJText = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        bugOperationsJPanel = new javax.swing.JPanel();
         chStatBtn = new javax.swing.JButton();
+        creatBtn = new javax.swing.JButton();
         updateBtn = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
@@ -176,14 +201,14 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Name", "Type", "Priority", "Level", "Dveloper", "Tester", "Date", "Photo", "Status"
+                "ID", "Name", "Type", "Priority", "Level", "Developer_id", "Developer", "Tester_id", "Tester", "Date", "Photo", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -201,6 +226,53 @@ public class BugsListJFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTable1);
 
+        totalBugsJText.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        totalBugsJText.setText("totalNumber");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setText("Checked:");
+        jLabel2.setToolTipText("");
+
+        checkedBugsJText.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        checkedBugsJText.setText("checkedNumber");
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setText("Total:");
+
+        javax.swing.GroupLayout AdminJPanelLayout = new javax.swing.GroupLayout(AdminJPanel);
+        AdminJPanel.setLayout(AdminJPanelLayout);
+        AdminJPanelLayout.setHorizontalGroup(
+            AdminJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AdminJPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(totalBugsJText)
+                .addGap(24, 24, 24)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(checkedBugsJText)
+                .addContainerGap(107, Short.MAX_VALUE))
+        );
+        AdminJPanelLayout.setVerticalGroup(
+            AdminJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, AdminJPanelLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(AdminJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(checkedBugsJText)
+                    .addComponent(totalBugsJText)
+                    .addComponent(jLabel1)))
+        );
+
+        chStatBtn.setText("Change status");
+        chStatBtn.setEnabled(false);
+        chStatBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                chStatBtnMouseClicked(evt);
+            }
+        });
+
         creatBtn.setText("Create");
         creatBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -213,14 +285,6 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
         });
 
-        chStatBtn.setText("Change status");
-        chStatBtn.setEnabled(false);
-        chStatBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                chStatBtnMouseClicked(evt);
-            }
-        });
-
         updateBtn.setText("Update");
         updateBtn.setEnabled(false);
         updateBtn.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -229,26 +293,47 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout bugOperationsJPanelLayout = new javax.swing.GroupLayout(bugOperationsJPanel);
+        bugOperationsJPanel.setLayout(bugOperationsJPanelLayout);
+        bugOperationsJPanelLayout.setHorizontalGroup(
+            bugOperationsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bugOperationsJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chStatBtn)
+                .addGap(20, 20, 20)
+                .addComponent(creatBtn)
+                .addGap(20, 20, 20)
+                .addComponent(updateBtn)
+                .addGap(0, 0, 0))
+        );
+        bugOperationsJPanelLayout.setVerticalGroup(
+            bugOperationsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bugOperationsJPanelLayout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(bugOperationsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chStatBtn)
+                    .addComponent(creatBtn)
+                    .addComponent(updateBtn)))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(chStatBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(creatBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(updateBtn)
-                .addContainerGap(61, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(bugOperationsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(AdminJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(creatBtn)
-                    .addComponent(chStatBtn)
-                    .addComponent(updateBtn))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(bugOperationsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(AdminJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
 
@@ -256,13 +341,12 @@ public class BugsListJFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 742, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1081, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -270,9 +354,9 @@ public class BugsListJFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -280,16 +364,16 @@ public class BugsListJFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(16, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(53, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -310,7 +394,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
             }
         } else if (evt.getClickCount() == 2) {
 
-            String imagePath = "Images\\" + (String) jTable1.getValueAt(jTable1.getSelectedRow(), 8);
+            String imagePath = "Images\\" + (String) jTable1.getValueAt(jTable1.getSelectedRow(), 10);
 
             ImageIcon originalIcon = new ImageIcon(imagePath);
 
@@ -336,13 +420,31 @@ public class BugsListJFrame extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
             int sRow = jTable1.getSelectedRow();
             int bugId = (int) jTable1.getValueAt(sRow, 0);
-            boolean bugStatus = (boolean) jTable1.getValueAt(sRow, 9);
+            boolean bugStatus = (boolean) jTable1.getValueAt(sRow, 11);
+
+            int testerId = (int) jTable1.getValueAt(sRow, 7);
+
+            dataTypes.User currDeveloperData = ((dataTypes.User) SessionStorage.getData());
 
             BugF bugFile = new BugF();
 
             try {
-                bugFile.update(new Object[][] { { "status", !bugStatus } },(bug)-> bug.getId().equals(bugId));
-                jTable1.setValueAt(!bugStatus, sRow, 9);
+                bugFile.update(new Object[][]{{"status", !bugStatus}}, (bug) -> bug.getId().equals(bugId));
+
+                jTable1.setValueAt(!bugStatus, sRow, 11);
+
+                dataTypes.User testerData = new UserF().getByID(testerId);
+
+                if (!bugStatus) {
+                    String message
+                            = "Developer with data\n"
+                            + "   ID: " + currDeveloperData.getId()
+                            + "\n   Name: " + currDeveloperData.name
+                            + "\n has completed a bug with id: " + bugId;
+
+                    utils.Email.send(testerData.email, "bug solved", message);
+                }
+
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
             }
@@ -360,7 +462,6 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         int bugId = (int) jTable1.getValueAt(sRow, 0);
 
-
         BugF bugFile = new BugF();
 
         try {
@@ -370,7 +471,6 @@ public class BugsListJFrame extends javax.swing.JFrame {
                 updateBtn.setEnabled(false);
                 return;
             }
-
 
             new bugJframe(bug).setVisible(true);
 
@@ -416,14 +516,20 @@ public class BugsListJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel AdminJPanel;
+    private javax.swing.JPanel bugOperationsJPanel;
     private javax.swing.JButton chStatBtn;
+    private static javax.swing.JLabel checkedBugsJText;
     private javax.swing.JButton creatBtn;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     public static javax.swing.JTable jTable1;
+    private static javax.swing.JLabel totalBugsJText;
     public static javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 }
