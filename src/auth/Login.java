@@ -4,17 +4,16 @@
  */
 package auth;
 
-
 /**
  *
  * @author ahmed
  */
-import database.DB;
-import java.sql.*;
 import javax.swing.*;
 import User.CreateUserJFrame;
-import dataTypes.User;
+import java.lang.reflect.Field;
 import utils.SessionStorage;
+import utils.fileObj.CRUD.*;
+import java.util.ArrayList;
 
 public class Login extends javax.swing.JFrame {
 
@@ -178,19 +177,17 @@ public class Login extends javax.swing.JFrame {
                 throw new Exception("Both fields mustn't be empty.");
             }
 
-            Statement statement = DB.connection.createStatement();
+            ArrayList<dataTypes.User> usersList = new UserF().get((u->u.email.equals(email)));
 
-            ResultSet resultSet = statement.executeQuery("select * from user where email = '" + email + "'");
-
-            if (!resultSet.next()) {
+            if (usersList.isEmpty()) {
                 throw new Exception("Email isn't exist.");
             }
 
-            if (!password.equals(resultSet.getString("password"))) {
+            if (!password.equals(usersList.get(0).password)) {
                 throw new Exception("Incorrect password.");
             }
 
-            SessionStorage.setData(User.toUser(resultSet));
+            SessionStorage.setData(usersList.get(0));
 
             new project.ProjectsListJFrame().setVisible(true);
 
@@ -215,17 +212,15 @@ public class Login extends javax.swing.JFrame {
     public static void main(String args[]) {
 
         try {
-//            DB.connectMySql();
-
-//            new Login().setVisible(true);                
-                
-
+            new Login().setVisible(true);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
 
     }
+    
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -239,16 +234,4 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPasswordField passField;
     // End of variables declaration//GEN-END:variables
-}
-
-class OuterClass {
-
-    int a = 20;
-
-    class InnerClass {
-
-        void display() {
-            System.out.println(a);
-        }
-    }
 }

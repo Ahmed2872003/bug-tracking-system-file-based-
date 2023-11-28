@@ -9,28 +9,28 @@ import java.time.LocalDateTime;
 
 
 public class Bug implements Serializable, utils.Identifiable {
-    public Integer id;
+    private Integer id;
     public String name;
     public String type;
     public String priority;
     public String level;
-    public Project project;
-    public User developer;
-    public User tester;
+    public Integer project_id;
+    public Integer developer_id;
+    public Integer tester_id;
     public String createdAt;
     public Boolean status;
     public String img;
     
-    public Bug(final Integer id, final String name, final String type, final String priority, final String level, final Project project, final User developer, final User tester, final String img){
+    public Bug(final Integer id, final String name, final String type, final String priority, final String level, final Integer project_id, final Integer developer_id, final Integer tester_id, final String img){
         
         this.id = id;
         this.name = name;
         this.type = type;
         this.priority = priority;
         this.level = level;
-        this.project = project;
-        this.developer = developer;
-        this.tester = tester;
+        this.project_id = project_id;
+        this.developer_id = developer_id;
+        this.tester_id = tester_id;
         this.createdAt = LocalDateTime.now().toString().split("\\.")[0]; // gets current Data and time
         this.status = false;
         this.img = img;

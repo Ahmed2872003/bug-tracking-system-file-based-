@@ -4,8 +4,6 @@
  */
 package dataTypes;
 
-import java.sql.*;
-import database.DB;
 import java.io.Serializable;
 import utils.Identifiable;
 /**
@@ -14,7 +12,7 @@ import utils.Identifiable;
  */
 public class User implements Serializable, Identifiable{
     
-    public Integer id;
+    private Integer id;
     public String name;
     public String email;
     public String password;

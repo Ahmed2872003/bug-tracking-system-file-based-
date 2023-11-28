@@ -4,17 +4,15 @@
  */
 package bug;
 
-import Models.BugM;
-import Models.UserM;
 import dataTypes.User;
 import java.awt.Image;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.ImageIcon;
+import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utils.SessionStorage;
+import utils.fileObj.CRUD.*;
 
 /**
  *
@@ -46,8 +44,10 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         removeAllRows();
 
-        BugM bm = new BugM();
-        ResultSet rs;
+        BugF BugFile = new BugF();
+        
+        ArrayList<dataTypes.Bug> bugsList = null;
+        
         User userData = ((User) SessionStorage.getData());
 
         javax.swing.JTable jTableProjects = project.ProjectsListJFrame.jTable1;
@@ -57,61 +57,56 @@ public class BugsListJFrame extends javax.swing.JFrame {
         int projectId = (int) jTableProjects.getValueAt(sRow, 0);
 
         try {
-            switch (userData.getRole()) {
+            switch (userData.role) {
                 case "Developer": {
-                    rs = bm.get("developer_id=" + userData.getID() + " AND project_id=" + projectId);
+                    bugsList = BugFile.get((bug)-> bug.developer_id.equals(userData.getId()), (bug)-> bug.project_id.equals(projectId));
                     break;
                 }
                 default: {
-                    rs = bm.get("project_id=" + projectId);
+                    bugsList = BugFile.get((bug)-> bug.project_id.equals(projectId));
                 }
             }
 
-            while (rs.next()) {
-                addTableRow(rs);
+            for (dataTypes.Bug bug: bugsList) {
+                addTableRow(bug);
             }
-            rs.close();
-            bm.statement.close();
         } catch (Exception e) {
-
             messages.JFrameMessage.showErr(e);
         }
 
     }
 
-    public static void addTableRow(ResultSet rs) throws SQLException, IOException {
-        UserM u = new UserM();
+    public static void addTableRow(dataTypes.Bug bug) throws Exception {
+        UserF userFile = new UserF();
 
         String devName = "";
         String testerName = "";
 
-        ResultSet userRs = u.get("id=" + rs.getInt("developer_id"));
+        dataTypes.User user = userFile.getByID(bug.developer_id);
 
-        if (userRs.next()) {
-            devName = userRs.getString("name");
+        if (user != null) {
+            devName = user.name;
         }
 
-        userRs = u.get("id=" + rs.getInt("tester_id"));
+        user = userFile.getByID(bug.tester_id);
 
-        if (userRs.next()) {
-            testerName = userRs.getString("name");
+        if (user!= null) {
+            testerName = user.name;
         }
 
-        if (userRs.getInt("id") == ((User) SessionStorage.getData()).getID()) {
+        if (user.getId().intValue() == ((User) SessionStorage.getData()).getId().intValue()) {
             testerName = "You";
         }
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-        model.addRow(new Object[]{rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getString("priority"), rs.getString("level"), devName, testerName, rs.getString("date"), rs.getString("img"), rs.getBoolean("status")});
-
-        userRs.close();
+        model.addRow(new Object[]{bug.getId().intValue(), bug.name, bug.type, bug.priority, bug.level, devName, testerName, bug.createdAt, bug.img, bug.status});
     }
 
     private void checkAuth() {
         User u = ((User) SessionStorage.getData());
 
-        switch (u.getRole()) {
+        switch (u.role) {
             case "Tester": {
                 jPanel2.remove(chStatBtn);
                 break;
@@ -332,7 +327,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
     private void creatBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_creatBtnMouseClicked
 
         new bugJframe(null).setVisible(true);
-        
+
 
     }//GEN-LAST:event_creatBtnMouseClicked
 
@@ -343,10 +338,10 @@ public class BugsListJFrame extends javax.swing.JFrame {
             int bugId = (int) jTable1.getValueAt(sRow, 0);
             boolean bugStatus = (boolean) jTable1.getValueAt(sRow, 9);
 
-            BugM bm = new BugM();
+            BugF bugFile = new BugF();
 
             try {
-                bm.update("status = " + !bugStatus, "id=" + bugId);
+                bugFile.update(new Object[][] { { "status", !bugStatus } },(bug)-> bug.getId().equals(bugId));
                 jTable1.setValueAt(!bugStatus, sRow, 9);
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
@@ -365,23 +360,19 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         int bugId = (int) jTable1.getValueAt(sRow, 0);
 
-        int devId;
 
-        BugM bm = new BugM();
+        BugF bugFile = new BugF();
 
         try {
-            ResultSet rs = bm.getById(bugId);
+            dataTypes.Bug bug = bugFile.getByID(bugId);
 
-            rs.next();
-
-            if (rs.getInt("tester_id") != ((User) SessionStorage.getData()).getID()) {
+            if (bug.tester_id.intValue() != ((User) SessionStorage.getData()).getId().intValue()) {
                 updateBtn.setEnabled(false);
                 return;
             }
 
-            devId = rs.getInt("developer_id");
 
-            new bugJframe(rs).setVisible(true);
+            new bugJframe(bug).setVisible(true);
 
         } catch (Exception e) {
             messages.JFrameMessage.showErr(e);

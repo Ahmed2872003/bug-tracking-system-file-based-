@@ -6,20 +6,19 @@ import java.io.Serializable;
 
 
 public class Project implements Serializable, utils.Identifiable {
-    public Integer id;
+    private Integer id;
     public String name;
-    public User admin;
+    public Integer admin_id;
     
-    public Project(final Integer id, final String name, final User admin){
+    public Project(final Integer id, final String name, final Integer admin_id){
         this.id = id;
         this.name = name;
-        this.admin = admin;
+        this.admin_id = admin_id;
     }
     
     @Override
     public Integer getId(){ return id; }
-    public String getName(){ return name; }
-    public User getAdmin(){ return admin; }
+
 
     
     @Override

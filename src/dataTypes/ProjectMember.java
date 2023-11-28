@@ -11,18 +11,16 @@ import java.io.Serializable;
  * @author ahmed
  */
 public class ProjectMember implements Serializable, utils.Identifiable{
-    public Integer id;
-    public Project project;
-    public User member;
+    private Integer id;
+    public Integer project_id;
+    public Integer member_id;
     
-    ProjectMember(final Project p, final User u){
-        this.project = p;
-        this.member = u;
+    public ProjectMember(final Integer project_id, final Integer member_id){
+        this.project_id = project_id;
+        this.member_id = member_id;
     }
     @Override
     public Integer getId(){ return id; }
-    public Project getProject(){ return project; }
-    public User getMember() { return member; }
 
 
     @Override

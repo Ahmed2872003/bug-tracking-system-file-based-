@@ -1,25 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package User;
 
-import Models.UserM;
 import javax.swing.JOptionPane;
 import utils.Email;
-import java.sql.*;
+import utils.fileObj.CRUD.*;
+import utils.Email;
 
-/**
- *
- * @author ahmed
- */
+
 public class CreateUserJFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form CreateUser
-     */
+
     public CreateUserJFrame(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+        this.isNotAdmin = isAdmin;
         initComponents();
     }
 
@@ -158,7 +149,7 @@ public class CreateUserJFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        if(isAdmin) roleField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Developer", "Tester", "Project Manager" }));
+        if(isNotAdmin) roleField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Developer", "Tester", "Project Manager" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -196,26 +187,20 @@ public class CreateUserJFrame extends javax.swing.JFrame {
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
 
         try{
-            if(!Email.validate(emailField.getText()))
+            if(!Email.isValidate(emailField.getText()))
                 throw new Exception("Enter a valid email");
 
             if(!String.valueOf(passField.getPassword()).equals(String.valueOf(re_enterPassField.getPassword())))
                 throw new Exception("password fields is not the same");
 
-            String []data = new String[] {nameField.getText(), emailField.getText(), String.valueOf(passField.getPassword()), (String)roleField.getSelectedItem()};
+            dataTypes.User data = new dataTypes.User (null, nameField.getText(), emailField.getText(), String.valueOf(passField.getPassword()), (String)roleField.getSelectedItem());
 
-            UserM um = new UserM();
-
-            ResultSet rs = um.create(data);
-            
-            rs.next();
-            
-            
+            new UserF().create(data);
 
             JOptionPane.showMessageDialog(null, "Created successfully", "Created", JOptionPane.INFORMATION_MESSAGE);
 
-            if(isAdmin)
-                project.ProjectDetailsJFrame.addUserToProject(rs.getInt("id"));
+            if(isNotAdmin)
+                project.ProjectDetailsJFrame.addUserToProject(data.getId());
             
             
         }catch(Exception e){
@@ -251,5 +236,5 @@ public class CreateUserJFrame extends javax.swing.JFrame {
     private javax.swing.JButton resetBtn;
     private javax.swing.JComboBox<String> roleField;
     // End of variables declaration//GEN-END:variables
-    private boolean isAdmin = false;
+    private boolean isNotAdmin = false;
 }

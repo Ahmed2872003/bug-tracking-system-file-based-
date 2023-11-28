@@ -14,7 +14,7 @@ import java.util.function.Predicate;
  *
  * @author ahmed
  */
-abstract public class Obj<T extends Identifiable> {
+abstract public class ObjF<T extends Identifiable> {
 
     protected String name;
     protected ObjectInputStream ois;
@@ -24,7 +24,7 @@ abstract public class Obj<T extends Identifiable> {
     protected File file;
     protected Path path;
 
-    public Obj(String name) {
+    public ObjF(String name) {
         this.name = name;
 
         Path path = Paths.get("storage\\" + name + ".txt");
@@ -38,7 +38,7 @@ abstract public class Obj<T extends Identifiable> {
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -111,8 +111,10 @@ abstract public class Obj<T extends Identifiable> {
 
     abstract protected void validateData(T obj) throws Exception;
 
-    private boolean matchFilters(T obj, Predicate<T> predicates[]) {
+    abstract protected void checkUnique(T user) throws Exception;
 
+    protected boolean matchFilters(T obj, Predicate<T> predicates[]) {
+        
         if (predicates == null || predicates.length == 0) {
             return true;
         }
@@ -137,9 +139,7 @@ abstract public class Obj<T extends Identifiable> {
         return null;
     }
 
-    public void create(T obj) throws Exception {
-        validateData(obj);
-
+    public T create(T obj) throws Exception {
         ArrayList<T> list = new ArrayList<T>();
 
         if (!isEmpty()) {
@@ -152,11 +152,15 @@ abstract public class Obj<T extends Identifiable> {
 
         Integer LastInsertedId = getLastInsertedId();
 
-        if (LastInsertedId != null) {
-            obj.setId(LastInsertedId + 1);
-        } else {
-            obj.setId(1);
+        if (obj != null) {
+            if (LastInsertedId != null) {
+                obj.setId(++LastInsertedId);
+            } else {
+                obj.setId(LastInsertedId = 1);
+            }
         }
+
+        validateData(obj);
 
         list.add(obj);
 
@@ -165,19 +169,22 @@ abstract public class Obj<T extends Identifiable> {
         oos.writeObject(list);
 
         closeOutput();
+        
+        return getByID(LastInsertedId);
     }
 
     public T getByID(Integer id) throws IOException, ClassNotFoundException {
-        if (!isEmpty()) {
+        if (!isEmpty() && id != null) {
             openInput();
 
             ArrayList<T> list = (ArrayList<T>) ois.readObject();
-            
+
             closeInput();
 
-            for(T obj: list){
-                if(obj.getId().intValue() == id.intValue())
+            for (T obj : list) {
+                if (obj.getId().intValue() == id.intValue()) {
                     return obj;
+                }
             }
             return null;
         }
@@ -186,7 +193,7 @@ abstract public class Obj<T extends Identifiable> {
 
     public ArrayList<T> get(Predicate<T>... predicates) throws IOException, ClassNotFoundException {
         ArrayList<T> res = new ArrayList<T>();
-
+        
         if (!isEmpty()) {
             openInput();
             for (T obj : (ArrayList<T>) ois.readObject()) {
@@ -202,8 +209,12 @@ abstract public class Obj<T extends Identifiable> {
         return res;
     }
 
-    public void delete(Predicate<T>... predicates) throws IOException, ClassNotFoundException {
+    public int delete(Predicate<T>... predicates) throws Exception {        
+        
+        int c = 0;
+        
         if (!isEmpty()) {
+            
             ArrayList<T> ObjectsAfterdelete = new ArrayList<T>();
 
             openInput();
@@ -212,7 +223,7 @@ abstract public class Obj<T extends Identifiable> {
 
                 if (!matchFilters(obj, predicates)) {
                     ObjectsAfterdelete.add(obj);
-                }
+                }else c++;
             }
             closeInput();
 
@@ -223,34 +234,38 @@ abstract public class Obj<T extends Identifiable> {
             closeOutput();
 
         }
+        
+        return c;
     }
 
-    public void updateOne(T newObj ,Predicate<T>... predicates) throws Exception{
-        if(!isEmpty() && predicates != null && predicates.length != 0){
-            
-            validateData(newObj);
-            
+    public int update(Object newData[][], Predicate<T>... predicates) throws Exception {
+        int c = 0;
+        
+        if (!isEmpty()) {
+
             openInput();
-            
+
             ArrayList<T> storedList = (ArrayList<T>) ois.readObject();
-            
+
             closeInput();
             
-            
-            for(int i = 0 ; i < storedList.size() ; i++){
-                if(matchFilters(storedList.get(i), predicates)){
-                    storedList.set(i, newObj);
-                    break;
+            for (int i = 0; i < storedList.size(); i++) {
+                if (matchFilters(storedList.get(i), predicates)) {
+                    utils.ObjectPatcher.patch(storedList.get(i), newData);
+                    c++;
                 }
             }
-            
+
             openOutput();
-            
+
             oos.writeObject(storedList);
-            
+
             closeOutput();
             
+            
+
         }
+        return c;
     }
-    
+
 }

@@ -166,7 +166,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="roleFieldActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(isAdmin) roleField.setModel(new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &quot;Developer&quot;, &quot;Tester&quot;, &quot;Project Manager&quot; }));"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(isNotAdmin) roleField.setModel(new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &quot;Developer&quot;, &quot;Tester&quot;, &quot;Project Manager&quot; }));"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>

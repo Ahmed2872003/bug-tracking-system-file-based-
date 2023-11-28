@@ -5,12 +5,12 @@
 package project;
 
 
-import Models.ProjectM;
-import Models.UserM;
+
 import javax.swing.JOptionPane;
 import utils.SessionStorage;
-import java.sql.ResultSet;
 import dataTypes.User;
+import utils.fileObj.CRUD.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -130,31 +130,21 @@ public class ProjectJFrame extends javax.swing.JFrame {
     private void addBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addBtnMouseClicked
         
         if(addBtn.isEnabled()){
-            ProjectM pm = new ProjectM();
-            UserM um = new UserM();
+            ProjectF projectFile = new ProjectF();
+            ProjectMemberF projectMemberFile = new ProjectMemberF();
             
-            String data[] = new String[] { nameField.getText(),  String.valueOf(((User)SessionStorage.getData()).getID())};
-        
-            ResultSet rs;
+            dataTypes.Project data = new dataTypes.Project(null, nameField.getText(), ((User)SessionStorage.getData()).getId());
         
             try{
-              rs = pm.create(data);
+              dataTypes.Project project = projectFile.create(data);
               
-              rs.next();
-              
-              um.addToProject(new String[]{ String.valueOf(rs.getInt("id")), String.valueOf(((User) SessionStorage.getData()).getID())});
+              projectMemberFile.create(new dataTypes.ProjectMember(project.getId(), ((User) SessionStorage.getData()).getId()));
             
-              rs = pm.get("admin_id='"+ data[1] + "' AND name='" + data[0] + "'");
-            
-              rs.next();
-            
-              ProjectsListJFrame.addToTable(new Object[] { rs.getInt("id"), nameField.getText() });
+              ProjectsListJFrame.addToTable(new Object[] { project.getId().intValue(), nameField.getText() });
             
               nameField.setText("");
             
               nameFieldKeyReleased(null);
-              
-              rs.close();
             
             }catch(Exception e){
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Creatoin error", JOptionPane.ERROR_MESSAGE);

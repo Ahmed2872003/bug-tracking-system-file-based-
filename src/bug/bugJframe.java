@@ -10,12 +10,12 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.SessionStorage;
-import Models.*;
-import java.sql.ResultSet;
 import messages.JFrameMessage;
 import java.nio.file.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import utils.fileObj.CRUD.*;
 
 /**
  *
@@ -26,7 +26,7 @@ public class bugJframe extends javax.swing.JFrame {
     /**
      * Creates new form bugJframe
      */
-    public bugJframe(ResultSet bugDetails){
+    public bugJframe(dataTypes.Bug bugDetails){
         initComponents();
         
         initTable();
@@ -40,19 +40,19 @@ public class bugJframe extends javax.swing.JFrame {
         
     }
 
-    private void fillFields(ResultSet bugDetails){
+    private void fillFields(dataTypes.Bug bugDetails){
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         
         try{
-            nameField.setText(bugDetails.getString("name"));
+            nameField.setText(bugDetails.name);
         
-            typeComBox.setSelectedItem(bugDetails.getString("type"));
+            typeComBox.setSelectedItem(bugDetails.type);
         
-            priorityComBox.setSelectedItem(bugDetails.getString("priority"));
+            priorityComBox.setSelectedItem(bugDetails.priority);
         
-            lvlComBox.setSelectedItem(bugDetails.getString("level"));
+            lvlComBox.setSelectedItem(bugDetails.level);
         
-            imgPathField.setText(bugDetails.getString("img"));
+            imgPathField.setText(bugDetails.img);
             
             
             
@@ -61,7 +61,7 @@ public class bugJframe extends javax.swing.JFrame {
                 
                 
                 
-                if(String.valueOf(devId).equals(bugDetails.getString("developer_id"))){
+                if(String.valueOf(devId).equals(String.valueOf(bugDetails.developer_id))){
                     jTable1.setRowSelectionInterval(i, i);
                     break;
                 }
@@ -76,9 +76,9 @@ public class bugJframe extends javax.swing.JFrame {
     public void initTable() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-        ProjectM pm = new ProjectM();
+        ProjectMemberF projectMemberFile = new ProjectMemberF();
 
-        ResultSet rs;
+        ArrayList<dataTypes.User> membersList = null;
 
         javax.swing.JTable jTableProjects = project.ProjectsListJFrame.jTable1;
 
@@ -87,10 +87,11 @@ public class bugJframe extends javax.swing.JFrame {
         int projectId = (int) jTableProjects.getValueAt(sRow, 0);
 
         try {
-            rs = pm.getMembers(projectId, "role='Developer'");
+            membersList = projectMemberFile.getMembers(projectId, (member)-> member.role.equals("Developer"));
+           
 
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt("id"), rs.getString("name")});
+            for (dataTypes.User member: membersList) {
+                model.addRow(new Object[]{member.getId().intValue(), member.name});
             }
         } catch (Exception e) {
             JFrameMessage.showErr(e);
@@ -384,17 +385,11 @@ public class bugJframe extends javax.swing.JFrame {
             int assignedDevId = (int) jTable1.getValueAt(jTable1.getSelectedRow(), 0);
 
             try {
-                BugM bm = new BugM();
+                BugF bugFile = new BugF();
 
-                ResultSet rs = bm.create(new String[]{nameField.getText(), (String) typeComBox.getSelectedItem(), (String) priorityComBox.getSelectedItem(), (String) lvlComBox.getSelectedItem(), String.valueOf(CurrProjectId), String.valueOf(assignedDevId), String.valueOf(((User) SessionStorage.getData()).getID()), destImgName});
-
-                rs.next();
+                dataTypes.Bug bug = bugFile.create(new dataTypes.Bug(null, nameField.getText(), (String) typeComBox.getSelectedItem(), (String) priorityComBox.getSelectedItem(), (String) lvlComBox.getSelectedItem(), CurrProjectId, assignedDevId, ((User) SessionStorage.getData()).getId(), destImgName));
                 
-                ResultSet rs2 = bm.getById(rs.getInt("id"));
-                
-                rs2.next();
-                
-                bug.BugsListJFrame.addTableRow(rs2);
+                BugsListJFrame.addTableRow(bug);
                 
                 Files.copy(srcImgPath, destImgPath);
                 
@@ -404,10 +399,6 @@ public class bugJframe extends javax.swing.JFrame {
                 
                 
                 resetFields();
-                
-                rs.close();
-                rs2.close();
-                bm.statement.close();
                 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
@@ -436,11 +427,11 @@ public class bugJframe extends javax.swing.JFrame {
             }
             
             try{
-                BugM bm = new BugM();
+                BugF bugFile = new BugF();
                 
-                String newData = "name='"+nameField.getText()+"',type='"+typeComBox.getSelectedItem().toString()+"',priority='"+priorityComBox.getSelectedItem().toString()+"',level='"+lvlComBox.getSelectedItem().toString()+"',img='"+destImgName+"',developer_id="+devId;
+                Object[][] newBugData = new Object[][]{ { "name", nameField.getText() }, { "type", typeComBox.getSelectedItem().toString() }, { "priority", priorityComBox.getSelectedItem().toString() }, { "level", lvlComBox.getSelectedItem().toString() }, { "img", destImgName }, { "developer_id", devId } };
                 
-                bm.update(newData, "id="+ bugId);
+                bugFile.update(newBugData, (bug)->bug.getId().equals(bugId));
                
                 
                 if(!isImgSame){
@@ -459,15 +450,7 @@ public class bugJframe extends javax.swing.JFrame {
             BugsListJFrame.updateBtn.setEnabled(false);
             
             this.dispose();
-                
             
-            
-            
-                
-            bm.statement.close();
-            
-                
-                
             }catch(Exception e){
                 messages.JFrameMessage.showErr(e);
             }

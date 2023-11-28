@@ -4,18 +4,18 @@
  */
 package project;
 
-import Models.BugM;
-import Models.ProjectM;
-import Models.UserM;
+
 import User.CreateUserJFrame;
 import dataTypes.User;
+import java.util.ArrayList;
+import java.util.function.Predicate;
 import javax.swing.table.DefaultTableModel;
 import utils.SessionStorage;
-import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import messages.JFrameMessage;
+import utils.fileObj.CRUD.*;
 
 /**
  *
@@ -248,14 +248,14 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
 
         int sRow = jTable1.getSelectedRow();
 
-        if (((User) SessionStorage.getData()).is("Admin") && !jTable1.getValueAt(sRow, 3).equals("Admin") && ((User) SessionStorage.getData()).getID().intValue() != (int) jTable1.getValueAt(sRow, 0)) {
+        if (((User) SessionStorage.getData()).is("Admin") && !jTable1.getValueAt(sRow, 3).equals("Admin") && ((User) SessionStorage.getData()).getId().intValue() != (int) jTable1.getValueAt(sRow, 0)) {
 
-            int userId = (int) jTable1.getValueAt(sRow, 0);
+            Object userId = jTable1.getValueAt(sRow, 0);
 
-            UserM um = new UserM();
+            UserF userFile = new UserF();
 
             try {
-                um.update("role='" + jTable1.getValueAt(sRow, 3) + "'", "id=" + userId);
+                userFile.update(new Object[][] { { "role", jTable1.getValueAt(sRow, 3) } }, (user) -> user.getId().equals(userId));
             } catch (Exception e) {
                 JFrameMessage.showErr(e);
             }
@@ -266,23 +266,24 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
         try {
-            ResultSet rs = null;
-            ProjectM pm = new ProjectM();
+            ArrayList<dataTypes.User>  members = null;
+            ProjectMemberF projectMemberFile = new ProjectMemberF();
 
             javax.swing.JTable projectsT = ProjectsListJFrame.jTable1;
 
-            rs = pm.getMembers((int) projectsT.getValueAt(projectsT.getSelectedRow(), 0), "");
+            members = projectMemberFile.getMembers((int)projectsT.getValueAt(projectsT.getSelectedRow(), 0));
+                
 
-            while (rs.next()) {
-                Object[] data = new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+            for (dataTypes.User member: members) {
+                Object[] data = new Object[]{member.getId().intValue(), member.name, member.email, member.role};
 
                 model.addRow(data);
             }
 
-            rs.close();
-            pm.statement.close();
+            
+            
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
     }
 
@@ -301,6 +302,8 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
     private void addBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addBtnMouseClicked
         if (addBtn.isEnabled()) {
             try {
+                if(Integer.valueOf(idField.getText()).equals(((User) SessionStorage.getData()).getId()))
+                    throw new Exception("This is your id");
                 addUserToProject(Integer.valueOf(idField.getText()));
                 idField.setText("");
                 addBtn.setEnabled(false);
@@ -330,18 +333,19 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
         if (deleteBtn.isEnabled() && !jTable1.getValueAt(sRow, 3).equals("Admin")) {
             try {
 
-                UserM um = new UserM();
-                BugM bm = new BugM();
+                ProjectMemberF projectMemberFile = new ProjectMemberF();
+                BugF BugFile = new BugF();
 
                 int sRowProject = ProjectsListJFrame.jTable1.getSelectedRow();
 
-                int deletedID = (int) jTable1.getValueAt(sRow, 0);
+                Object deletedMemberId = jTable1.getValueAt(sRow, 0);
                 
-                um.deleteFromProject(deletedID, (int) ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0));
+                projectMemberFile.delete((projectMember) -> projectMember.member_id.equals(deletedMemberId), (projectMember)-> projectMember.project_id.equals(ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0)));
+                
                 if(deletedRole.equals("Developer"))
-                    bm.update("developer_id = null", "developer_id="+deletedID);
+                    BugFile.update(new Object[][] { { "developer_id", null } }, (bug)-> bug.developer_id != null ,(bug)-> bug.developer_id.equals(deletedMemberId));
                 else if(deletedRole.equals("Tester"))
-                    bm.delete("tester_id="+deletedID);
+                    BugFile.delete((bug)-> bug.tester_id.equals(deletedMemberId));
 
                 model.removeRow(sRow);
 
@@ -362,19 +366,19 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_createMemBtnMouseClicked
 
-    public static void addUserToProject(int userId) throws SQLException {
-        UserM u = new UserM();
+    public static void addUserToProject(int userId) throws Exception{
+        ProjectMemberF ProjectMemberFile = new ProjectMemberF();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
         int projectId = (int) ProjectsListJFrame.jTable1.getValueAt(ProjectsListJFrame.jTable1.getSelectedRow(), 0);
+        
 
-        u.addToProject(new String[]{String.valueOf(projectId), String.valueOf(userId)});
+        ProjectMemberFile.create(new dataTypes.ProjectMember(projectId, userId));
 
-        ResultSet rs = u.get("id=" + userId);
+        dataTypes.User user = new UserF().get((u) -> u.getId().intValue() == userId).get(0);
 
-        rs.next();
 
-        model.addRow(new Object[]{rs.getInt("id"), rs.getString("name"), rs.getString("email"), rs.getString("role")});
+        model.addRow(new Object[]{user.getId().intValue(), user.name, user.email, user.role});
     }
 
     /**

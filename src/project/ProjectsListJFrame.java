@@ -6,23 +6,17 @@ package project;
 
 import javax.swing.*;
 
-import java.sql.*;
 
-import Models.ProjectM;
-import Models.UserM;
-import User.CreateUserJFrame;
 import dataTypes.User;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import utils.SessionStorage;
-/**
- *
- * @author ahmed
- */
+import utils.fileObj.CRUD.*;
+
+
 public class ProjectsListJFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ProjectsListJFrame
-     */
+ 
     public ProjectsListJFrame() {
         initComponents();
         checkAuth();
@@ -186,25 +180,25 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
     
     private void initTable(){
     
-        try{
-            ResultSet rs;
-            
+        try{           
             User u = ((User)SessionStorage.getData());
+            
+            ArrayList<dataTypes.Project> projectsList;
             
             DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
             
-            if(u.getRole().equals("Admin")){
-                ProjectM pm = new ProjectM();
+            if(u.role.equals("Admin")){
+                ProjectF projectFile = new ProjectF();
                 
-                rs = pm.get("admin_id='"+ u.getID() + "'");
+                projectsList = projectFile.get((project)->project.admin_id.equals(u.getId()));
             }else{
-                UserM um = new UserM();
+                ProjectMemberF projectMembersFile  = new ProjectMemberF();
                 
-                rs = um.getProjects(u.getID());
+                projectsList = projectMembersFile.getProjects(u.getId());
             }
             
-            while(rs.next()){
-                model.addRow(new Object[]{ rs.getInt("id"), rs.getString("name") });
+            for(dataTypes.Project project: projectsList){
+                model.addRow(new Object[]{ project.getId().intValue(), project.name });
             }
         }catch(Exception e){
             System.out.println(e);
@@ -233,17 +227,18 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
                 try{
                     DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
                 
-                    ProjectM pm = new ProjectM();
+                    ProjectF projectFile = new ProjectF();
                     
                     int sRow = jTable1.getSelectedRow();
                     int sCol = jTable1.getSelectedColumn();
                     
                     
-                    pm.delete("id='" + jTable1.getValueAt(sRow, 0) + "'");
+                    projectFile.delete((project) -> project.getId().equals(jTable1.getValueAt(sRow, 0)));
                     
                     model.removeRow(sRow);
             
                     deleteBtn.setEnabled(false);
+                    detailsBtn.setEnabled(false);
                 }catch(Exception e){
                     JOptionPane.showConfirmDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     
@@ -258,7 +253,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_detailsBtnMouseClicked
 
     
-    public static void addToTable(Object data[]) throws SQLException{
+    public static void addToTable(Object data[]){
         
         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         
