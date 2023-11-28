@@ -5,6 +5,7 @@
 package bug;
 
 import dataTypes.User;
+import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -391,12 +392,16 @@ public class bugJframe extends javax.swing.JFrame {
                 
                 BugsListJFrame.addTableRow(bug);
                 
+                if(!new File("Images").isDirectory()) Files.createDirectory(Paths.get("Images"));
+                
                 Files.copy(srcImgPath, destImgPath);
                 
                 dataTypes.User developerDetails = new UserF().getByID(assignedDevId);
                 dataTypes.User testerDatails = ((dataTypes.User) SessionStorage.getData());
                 
                 JOptionPane.showMessageDialog(this, "Added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
+                
+                resetFields();
                 
                 // Send email to inform the developer about Bug details
                 
@@ -413,8 +418,6 @@ public class bugJframe extends javax.swing.JFrame {
                 
                 
                 utils.Email.send(developerDetails.email, "Assigning a bug", message);
-                
-                resetFields();
                 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
