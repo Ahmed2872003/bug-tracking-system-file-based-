@@ -26,6 +26,14 @@ abstract public class ObjF<T extends Identifiable> {
 
     public ObjF(String name) {
         this.name = name;
+        
+        if(!new File("storage").isDirectory()){
+            try{
+                Files.createDirectory(Paths.get("storage"));
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
 
         Path path = Paths.get("storage\\" + name + ".txt");
 
