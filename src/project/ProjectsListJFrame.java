@@ -66,6 +66,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
             }
         });
         jTable1.setFocusable(false);
+        jTable1.getTableHeader().setReorderingAllowed(false);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
