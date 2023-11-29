@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package bug;
+package bugJFrames;
 
 import dataTypes.User;
 import java.awt.Image;
@@ -53,7 +53,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         User userData = ((User) SessionStorage.getData());
 
-        javax.swing.JTable jTableProjects = project.ProjectsListJFrame.jTable1;
+        javax.swing.JTable jTableProjects = projectJFrames.ProjectsListJFrame.jTable1;
 
         int sRow = jTableProjects.getSelectedRow();
 
@@ -389,13 +389,14 @@ public class BugsListJFrame extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         if (evt.getClickCount() == 1) {
             if (chStatBtn.getParent() != null) {
-                DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                 int sRow = jTable1.getSelectedRow();
-                
-                if(!(boolean)jTable1.getValueAt(sRow, 11))
+
+                if (!(boolean) jTable1.getValueAt(sRow, 11)) {
                     chStatBtn.setEnabled(true);
-                else
+                } else {
                     chStatBtn.setEnabled(false);
+                }
             }
             if (updateBtn.getParent() != null) {
                 updateBtn.setEnabled(true);
@@ -428,7 +429,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
             int sRow = jTable1.getSelectedRow();
             int bugId = (int) jTable1.getValueAt(sRow, 0);
-            boolean bugStatus = (boolean) jTable1.getValueAt(sRow, 11);
+            boolean NewBugStatus = !(boolean) jTable1.getValueAt(sRow, 11);
 
             int testerId = (int) jTable1.getValueAt(sRow, 7);
 
@@ -436,23 +437,23 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
             BugF bugFile = new BugF();
 
-            try {
-                bugFile.update(new Object[][]{{"status", !bugStatus}}, (bug) -> bug.getId().equals(bugId));
+            try {                
+                ((modules.Developer) SessionStorage.getData()).ChangeBugStatus(bugId);
 
-                jTable1.setValueAt(!bugStatus, sRow, 11);
+                jTable1.setValueAt(NewBugStatus, sRow, 11);
+
+                
                 chStatBtn.setEnabled(false);
-                        
-                dataTypes.User testerData = new UserF().getByID(testerId);
 
-                if (!bugStatus) {
-                    String message
-                            = "Developer with data\n"
-                            + "   ID: " + currDeveloperData.getId()
-                            + "\n   Name: " + currDeveloperData.name
-                            + "\n has completed a bug with id: " + bugId;
+                    new Thread(() -> {
+                        try {
+                            dataTypes.User testerData = new UserF().getByID(testerId);
+                            ((modules.Developer) SessionStorage.getData()).SendEmailToTester(testerData.email, bugId);
+                        } catch (Exception e) {
+                            messages.JFrameMessage.showErr(e);
+                        }
 
-                    utils.Email.send(testerData.email, "bug solved", message);
-                }
+                    }).start();
 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);

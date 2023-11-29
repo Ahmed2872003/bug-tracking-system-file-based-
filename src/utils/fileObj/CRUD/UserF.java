@@ -11,9 +11,8 @@ import java.util.function.Predicate;
 import utils.fileObj.CRUD.*;
 
 public class UserF extends ObjF<dataTypes.User> {
-    
-    private String regex = "Tester|Developer|Project Manager|Admin";
-    
+
+    private String roleRegex = "Tester|Developer|Project Manager|Admin";
 
     public UserF() {
         super("user");
@@ -33,12 +32,12 @@ public class UserF extends ObjF<dataTypes.User> {
             throw new Exception("Provide a valid email");
         }
 
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(roleRegex);
 
         Matcher matcher = pattern.matcher(newUser.role);
 
         if (!matcher.matches()) {
-            throw new Exception("valid roles are: " + regex);
+            throw new Exception("valid roles are: " + roleRegex);
         }
 
         checkUnique(newUser);
@@ -106,24 +105,30 @@ public class UserF extends ObjF<dataTypes.User> {
         return c;
 
     }
-    
-    
-     public int update(Object newData[][], Predicate<dataTypes.User>... predicates) throws Exception{
-                 
-         for(Object arr[]: newData){
-            if(String.valueOf(arr[0]).equals("role")){
-                utils.Regex regex = new utils.Regex(this.regex);
-                
-                if(!regex.test((String)arr[1])) throw new Exception("valid roles are: "+this.regex);
-                else break;
+
+    public int update(Object newData[][], Predicate<dataTypes.User>... predicates) throws Exception {
+
+        for (Object arr[] : newData) {
+            switch (String.valueOf(arr[0])) {
+                case "role": {
+                    utils.Regex regex = new utils.Regex(this.roleRegex);
+
+                    if (!regex.test((String) arr[1])) {
+                        throw new Exception("valid roles are: " + this.roleRegex);
+                    }
+                    break;
+                }
+                case "email": {
+                    if (!utils.Email.isValidate((String) arr[1])) {
+                        throw new Exception("Enter a valid email");
+                    }
+                    break;
+                }
             }
-             
-         }
-         
-     
-         return super.update(newData, predicates);
-     }
+
+        }
+
+        return super.update(newData, predicates);
+    }
 
 }
-
-

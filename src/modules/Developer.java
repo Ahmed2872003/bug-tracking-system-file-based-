@@ -15,6 +15,7 @@ public class Developer extends dataTypes.User {
 
     public ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) throws Exception {
         return new BugF().get((bug) -> bug.developer_id.equals(getId()), (bug) -> bug.project_id.equals(projectId));
+        
     }
 
     public void ChangeBugStatus(Integer bugId) throws Exception {

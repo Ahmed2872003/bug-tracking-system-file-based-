@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package project;
+package projectJFrames;
 
 
-import User.CreateUserJFrame;
+import UserJFrames.CreateUserJFrame;
 import dataTypes.User;
 import java.util.ArrayList;
 import java.util.function.Predicate;
@@ -28,7 +28,6 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
      */
     public ProjectMemberJFrame() {
         initComponents();
-        tModelEvents();
         checkAuth();
     }
 
@@ -46,7 +45,6 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        createMemBtn = new javax.swing.JButton();
         deleteBtn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -68,7 +66,7 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -96,20 +94,6 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         ProjectMemberJFrame.initTable();
 
         jLabel1.setText("Members");
-
-        createMemBtn.setText("Create");
-        createMemBtn.setEnabled(false);
-        if(((User) SessionStorage.getData()).is("Admin")) createMemBtn.setEnabled(true);
-        createMemBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                createMemBtnMouseClicked(evt);
-            }
-        });
-        createMemBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createMemBtnActionPerformed(evt);
-            }
-        });
 
         deleteBtn.setText("Delete");
         deleteBtn.setEnabled(false);
@@ -142,33 +126,28 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(createMemBtn)
-                .addGap(12, 12, 12)
+                .addGap(0, 0, 0)
                 .addComponent(deleteBtn)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(addBtn)
+                .addGap(0, 0, 0))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(createMemBtn)
-                                .addComponent(deleteBtn)
-                                .addComponent(jLabel2))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(addBtn)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addBtn))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(deleteBtn)
+                        .addComponent(jLabel2)))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -176,10 +155,10 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
@@ -214,16 +193,7 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    private void tModelEvents() {
-        jTable1.getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (e.getType() == TableModelEvent.UPDATE) {
-                    jTable1Chnage(e);
-                }
-            }
-        });
-    }
+
 
     ;
     
@@ -239,26 +209,6 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
 
         }
 
-    }
-
-    private void jTable1Chnage(TableModelEvent evt) {
-
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-
-        int sRow = jTable1.getSelectedRow();
-
-        if (((User) SessionStorage.getData()).is("Admin") && !jTable1.getValueAt(sRow, 3).equals("Admin") && ((User) SessionStorage.getData()).getId().intValue() != (int) jTable1.getValueAt(sRow, 0)) {
-
-            Object userId = jTable1.getValueAt(sRow, 0);
-
-            UserF userFile = new UserF();
-
-            try {
-                userFile.update(new Object[][] { { "role", jTable1.getValueAt(sRow, 3) } }, (user) -> user.getId().equals(userId));
-            } catch (Exception e) {
-                JFrameMessage.showErr(e);
-            }
-        }
     }
 
     private static void initTable() {
@@ -355,26 +305,14 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_deleteBtnMouseClicked
 
-    private void createMemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMemBtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_createMemBtnActionPerformed
-
-    private void createMemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createMemBtnMouseClicked
-        if (createMemBtn.isEnabled()) {
-            new CreateUserJFrame(true).setVisible(true);
-        }
-    }//GEN-LAST:event_createMemBtnMouseClicked
-
-    public static void addUserToProject(int userId) throws Exception{
-        ProjectMemberF ProjectMemberFile = new ProjectMemberF();
+    public static void addUserToProject(Integer userId) throws Exception{
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
         int projectId = (int) ProjectsListJFrame.jTable1.getValueAt(ProjectsListJFrame.jTable1.getSelectedRow(), 0);
         
-
-        ProjectMemberFile.create(new dataTypes.ProjectMember(projectId, userId));
-
-        dataTypes.User user = new UserF().get((u) -> u.getId().intValue() == userId).get(0);
+        ((modules.Admin)SessionStorage.getData()).addUserToProject(userId, projectId);
+        
+        dataTypes.User user = new UserF().getByID(userId);
 
 
         model.addRow(new Object[]{user.getId().intValue(), user.name, user.email, user.role});
@@ -418,7 +356,6 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBtn;
-    private javax.swing.JButton createMemBtn;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JTextPane idField;
     private javax.swing.JLabel jLabel1;

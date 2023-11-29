@@ -16,8 +16,9 @@ import java.util.UUID;
 public class GenUniqueFName {
    
     public static String generate(String p){
+        if(p.isBlank()) return "";
         
-        String destImgName = "";
+        String generatedName = "";
         
         Path srcImgPath = Paths.get(p);
         
@@ -26,9 +27,9 @@ public class GenUniqueFName {
         if(fNamePath != null){
             String[] fNameWExt = fNamePath.toString().split("\\.");
 
-            destImgName = fNameWExt[0] + '-' + UUID.randomUUID().toString() + '.' + fNameWExt[1];
+            generatedName = fNameWExt[0] + '-' + UUID.randomUUID().toString() + '.' + fNameWExt[1];
         }
-        return destImgName;
+        return generatedName;
     }
     
 }

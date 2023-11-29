@@ -9,7 +9,7 @@ package auth;
  * @author ahmed
  */
 import javax.swing.*;
-import User.CreateUserJFrame;
+import UserJFrames.CreateUserJFrame;
 import java.lang.reflect.Field;
 import utils.SessionStorage;
 import utils.fileObj.CRUD.*;
@@ -191,9 +191,12 @@ public class Login extends javax.swing.JFrame {
             dataTypes.User user = usersList.get(0);
             
             switch(user.role){
-                case "Admin":
+                case "Admin":{
                     SessionStorage.setData(new Admin(user.getId(), user.name, user.email, user.password, user.role));
-                    break;
+                    new UserJFrames.AdminPanel().setVisible(true);
+                    return;
+                }
+                    
                 case "Tester":
                     SessionStorage.setData(new Tester(user.getId(), user.name, user.email, user.password, user.role));
                     break;
@@ -204,7 +207,7 @@ public class Login extends javax.swing.JFrame {
                     SessionStorage.setData(new Developer(user.getId(), user.name, user.email, user.password, user.role));
             }
 
-            new project.ProjectsListJFrame().setVisible(true);
+            new projectJFrames.ProjectsListJFrame().setVisible(true);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Validation error", JOptionPane.ERROR_MESSAGE);

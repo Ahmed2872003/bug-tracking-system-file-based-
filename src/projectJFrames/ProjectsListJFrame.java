@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package project;
+package projectJFrames;
 
 import javax.swing.*;
 
@@ -215,7 +215,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
         if (evt.getClickCount() == 1) {
             deleteBtn.setEnabled(true);
         }else if(evt.getClickCount() == 2){
-            new bug.BugsListJFrame().setVisible(true);
+            new bugJFrames.BugsListJFrame().setVisible(true);
         }
     }//GEN-LAST:event_jTable1MouseClicked
 

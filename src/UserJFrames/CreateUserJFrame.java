@@ -1,16 +1,15 @@
-package User;
+package UserJFrames;
 
 import javax.swing.JOptionPane;
 import utils.Email;
 import utils.fileObj.CRUD.*;
 import utils.Email;
-
+import utils.SessionStorage;
 
 public class CreateUserJFrame extends javax.swing.JFrame {
 
-
-    public CreateUserJFrame(boolean isAdmin) {
-        this.isNotAdmin = isAdmin;
+    public CreateUserJFrame(boolean adminCreateUser) {
+        this.adminCreateUser = adminCreateUser;
         initComponents();
     }
 
@@ -76,11 +75,6 @@ public class CreateUserJFrame extends javax.swing.JFrame {
         createBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 createBtnMouseClicked(evt);
-            }
-        });
-        createBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createBtnActionPerformed(evt);
             }
         });
 
@@ -149,7 +143,7 @@ public class CreateUserJFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        if(isNotAdmin) roleField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Developer", "Tester", "Project Manager" }));
+        if(adminCreateUser) roleField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Developer", "Tester", "Project Manager" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -181,32 +175,27 @@ public class CreateUserJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_roleFieldActionPerformed
 
     private void createBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createBtnMouseClicked
-
-    }//GEN-LAST:event_createBtnMouseClicked
-
-    private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-
-        try{
-            if(!Email.isValidate(emailField.getText()))
+        try {
+            if (!Email.isValidate(emailField.getText())) {
                 throw new Exception("Enter a valid email");
+            }
 
-            if(!String.valueOf(passField.getPassword()).equals(String.valueOf(re_enterPassField.getPassword())))
+            if (!String.valueOf(passField.getPassword()).equals(String.valueOf(re_enterPassField.getPassword()))) {
                 throw new Exception("password fields is not the same");
+            }
 
-            dataTypes.User data = new dataTypes.User (null, nameField.getText(), emailField.getText(), String.valueOf(passField.getPassword()), (String)roleField.getSelectedItem());
-
-            new UserF().create(data);
-
+            dataTypes.User data = new dataTypes.User(null, nameField.getText(), emailField.getText(), String.valueOf(passField.getPassword()), (String) roleField.getSelectedItem());
+            
+            dataTypes.User createdUser = new UserF().create(data);
+            
+            if(adminCreateUser) AdminPanel.addUserToTable(createdUser);
+            
             JOptionPane.showMessageDialog(null, "Created successfully", "Created", JOptionPane.INFORMATION_MESSAGE);
 
-            if(isNotAdmin)
-                project.ProjectMemberJFrame.addUserToProject(data.getId());
-            
-            
-        }catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Validation error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_createBtnActionPerformed
+    }//GEN-LAST:event_createBtnMouseClicked
 
     private void resetBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetBtnMouseClicked
         nameField.setText("");
@@ -236,5 +225,5 @@ public class CreateUserJFrame extends javax.swing.JFrame {
     private javax.swing.JButton resetBtn;
     private javax.swing.JComboBox<String> roleField;
     // End of variables declaration//GEN-END:variables
-    private boolean isNotAdmin = false;
+    private boolean adminCreateUser = false;
 }

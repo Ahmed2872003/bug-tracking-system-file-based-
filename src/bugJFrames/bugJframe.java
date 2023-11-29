@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package bug;
+package bugJFrames;
 
 import dataTypes.User;
 import java.io.File;
@@ -27,53 +27,48 @@ public class bugJframe extends javax.swing.JFrame {
     /**
      * Creates new form bugJframe
      */
-    public bugJframe(dataTypes.Bug bugDetails){
+    public bugJframe(dataTypes.Bug bugDetails) {
         initComponents();
-        
+
         initTable();
-        
-        if(bugDetails != null){
+
+        if (bugDetails != null) {
             jPanel2.remove(createBtn);
             fillFields(bugDetails);
-        }else
+        } else {
             jPanel2.remove(updateBtn);
-        
-        
+        }
+
     }
 
-    private void fillFields(dataTypes.Bug bugDetails){
+    private void fillFields(dataTypes.Bug bugDetails) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        
-        try{
+
+        try {
             nameField.setText(bugDetails.name);
-        
+
             typeComBox.setSelectedItem(bugDetails.type);
-        
+
             priorityComBox.setSelectedItem(bugDetails.priority);
-        
+
             lvlComBox.setSelectedItem(bugDetails.level);
-        
+
             imgPathField.setText(bugDetails.img);
-            
-            
-            
-            for(int i = 0 ; i < jTable1.getRowCount() ; i++){
-                int devId = (int)jTable1.getValueAt(i, 0);
-                
-                
-                
-                if(String.valueOf(devId).equals(String.valueOf(bugDetails.developer_id))){
+
+            for (int i = 0; i < jTable1.getRowCount(); i++) {
+                int devId = (int) jTable1.getValueAt(i, 0);
+
+                if (String.valueOf(devId).equals(String.valueOf(bugDetails.developer_id))) {
                     jTable1.setRowSelectionInterval(i, i);
                     break;
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             messages.JFrameMessage.showErr(e);
         }
-        
+
     }
-    
-    
+
     public void initTable() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
@@ -81,17 +76,16 @@ public class bugJframe extends javax.swing.JFrame {
 
         ArrayList<dataTypes.User> membersList = null;
 
-        javax.swing.JTable jTableProjects = project.ProjectsListJFrame.jTable1;
+        javax.swing.JTable jTableProjects = projectJFrames.ProjectsListJFrame.jTable1;
 
         int sRow = jTableProjects.getSelectedRow();
 
         int projectId = (int) jTableProjects.getValueAt(sRow, 0);
 
         try {
-            membersList = projectMemberFile.getMembers(projectId, (member)-> member.role.equals("Developer"));
-           
+            membersList = projectMemberFile.getMembers(projectId, (member) -> member.role.equals("Developer"));
 
-            for (dataTypes.User member: membersList) {
+            for (dataTypes.User member : membersList) {
                 model.addRow(new Object[]{member.getId().intValue(), member.name});
             }
         } catch (Exception e) {
@@ -375,12 +369,12 @@ public class bugJframe extends javax.swing.JFrame {
         if (validateData()) {
 
             String destImgName = utils.GenUniqueFName.generate(imgPathField.getText());
-            
+
             Path srcImgPath = Paths.get(imgPathField.getText());
-            
+
             Path destImgPath = Paths.get("Images\\" + destImgName);
 
-            javax.swing.JTable projectsTable = project.ProjectsListJFrame.jTable1;
+            javax.swing.JTable projectsTable = projectJFrames.ProjectsListJFrame.jTable1;
 
             int CurrProjectId = (int) projectsTable.getValueAt(projectsTable.getSelectedRow(), 0);
 
@@ -390,36 +384,25 @@ public class bugJframe extends javax.swing.JFrame {
                 BugF bugFile = new BugF();
 
                 dataTypes.Bug bug = bugFile.create(new dataTypes.Bug(null, nameField.getText(), (String) typeComBox.getSelectedItem(), (String) priorityComBox.getSelectedItem(), (String) lvlComBox.getSelectedItem(), CurrProjectId, assignedDevId, ((User) SessionStorage.getData()).getId(), destImgName));
-                
+
                 BugsListJFrame.addTableRow(bug);
-                
-                if(!new File("Images").isDirectory()) Files.createDirectory(Paths.get("Images"));
-                
+
+                if (!new File("Images").isDirectory()) {
+                    Files.createDirectory(Paths.get("Images"));
+                }
+
                 Files.copy(srcImgPath, destImgPath);
-                
+
                 dataTypes.User developerDetails = new UserF().getByID(assignedDevId);
                 dataTypes.User testerDatails = ((dataTypes.User) SessionStorage.getData());
-                
+
                 JOptionPane.showMessageDialog(this, "Added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
-                
+
                 resetFields();
-                
+
                 // Send email to inform the developer about Bug details
-                
-                String message = 
-                        "Bug details\n\n" + 
-                        "   ID: "+bug.getId()+
-                        "\n   Name: "+bug.name+
-                        "\n   Type: "+bug.type+
-                        "\n   Priority: "+bug.priority+
-                        "\n   Level: "+bug.level+
-                        "\n   Tester_id: "+testerDatails.getId()+
-                        "\n   Tester_name: "+testerDatails.name+
-                        "\n   CreatedAt: "+bug.createdAt;
-                
-                
-                utils.Email.send(developerDetails.email, "Assigning a bug", message);
-                
+                new Thread(() -> ((modules.Tester) SessionStorage.getData()).SendEmailToDev(developerDetails.email, bug)).start();
+
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
             }
@@ -428,62 +411,59 @@ public class bugJframe extends javax.swing.JFrame {
     }//GEN-LAST:event_createBtnMouseClicked
 
     private void updateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateBtnMouseClicked
-        if(validateData()){
-            
-            JTable bugsTable =  BugsListJFrame.jTable1;
-            
-            int bugId = (int)bugsTable.getValueAt(bugsTable.getSelectedRow(), 0);
-            
-            int devId = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-            
+        if (validateData()) {
+
+            JTable bugsTable = BugsListJFrame.jTable1;
+
+            int bugId = (int) bugsTable.getValueAt(bugsTable.getSelectedRow(), 0);
+
+            int devId = (int) jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+
             String destImgName = imgPathField.getText();
-            
-            Path oldPath = Paths.get("Images\\"+bugsTable.getValueAt(bugsTable.getSelectedRow(), 10));
-            
+
+            Path oldPath = Paths.get("Images\\" + bugsTable.getValueAt(bugsTable.getSelectedRow(), 10));
+
             boolean isImgSame = destImgName.equals(oldPath.getFileName().toString());
-            
-            if(!isImgSame){
+
+            if (!isImgSame) {
                 destImgName = utils.GenUniqueFName.generate(destImgName);
             }
-            
-            try{
+
+            try {
                 BugF bugFile = new BugF();
-                
-                Object[][] newBugData = new Object[][]{ { "name", nameField.getText() }, { "type", typeComBox.getSelectedItem().toString() }, { "priority", priorityComBox.getSelectedItem().toString() }, { "level", lvlComBox.getSelectedItem().toString() }, { "img", destImgName }, { "developer_id", devId } };
-                
-                bugFile.update(newBugData, (bug)->bug.getId().equals(bugId));
-               
-                
-                if(!isImgSame){
+
+                Object[][] newBugData = new Object[][]{{"name", nameField.getText()}, {"type", typeComBox.getSelectedItem().toString()}, {"priority", priorityComBox.getSelectedItem().toString()}, {"level", lvlComBox.getSelectedItem().toString()}, {"img", destImgName}, {"developer_id", devId}};
+
+                bugFile.update(newBugData, (bug) -> bug.getId().equals(bugId));
+
+                if (!isImgSame) {
                     Path srcPath = Paths.get(imgPathField.getText());
-                    Path destPath = Paths.get("Images\\"+destImgName);
-                    
+                    Path destPath = Paths.get("Images\\" + destImgName);
+
                     Files.deleteIfExists(oldPath);
-                
+
                     Files.copy(srcPath, destPath);
                 }
-                
-            BugsListJFrame.initTable();
-                
-            JOptionPane.showMessageDialog(null, "Updated successfully", "Updated", JOptionPane.INFORMATION_MESSAGE);
 
-            BugsListJFrame.updateBtn.setEnabled(false);
-            
-            this.dispose();
-            
-            }catch(Exception e){
+                BugsListJFrame.initTable();
+
+                JOptionPane.showMessageDialog(null, "Updated successfully", "Updated", JOptionPane.INFORMATION_MESSAGE);
+
+                BugsListJFrame.updateBtn.setEnabled(false);
+
+                this.dispose();
+
+            } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
             }
-            
-            
-            
-        }else{
+
+        } else {
             messages.JFrameMessage.showErr(new Exception("Ensure that all fields are filled"));
         }
     }//GEN-LAST:event_updateBtnMouseClicked
 
     private boolean validateData() {
-        if (nameField.getText().isEmpty() || imgPathField.getText().isEmpty() || jTable1.getSelectedRow() == -1) {
+        if (nameField.getText().isBlank() || imgPathField.getText().isBlank() || jTable1.getSelectedRow() == -1) {
             return false;
         }
 
@@ -491,7 +471,7 @@ public class bugJframe extends javax.swing.JFrame {
 
     }
 
-    private void resetFields(){
+    private void resetFields() {
         nameField.setText("");
         typeComBox.setSelectedIndex(0);
         priorityComBox.setSelectedIndex(0);
@@ -499,7 +479,7 @@ public class bugJframe extends javax.swing.JFrame {
         imgPathField.setText("");
         jTable1.clearSelection();
     }
-    
+
     /**
      * @param args the command line arguments
      */
