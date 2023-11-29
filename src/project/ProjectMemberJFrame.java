@@ -21,12 +21,12 @@ import utils.fileObj.CRUD.*;
  *
  * @author ahmed
  */
-public class ProjectDetailsJFrame extends javax.swing.JFrame {
+public class ProjectMemberJFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form ProjectDetailsJFrame
      */
-    public ProjectDetailsJFrame() {
+    public ProjectMemberJFrame() {
         initComponents();
         tModelEvents();
         checkAuth();
@@ -54,7 +54,7 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
         addBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Project details");
+        setTitle("Project Members");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -93,7 +93,7 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
-        ProjectDetailsJFrame.initTable();
+        ProjectMemberJFrame.initTable();
 
         jLabel1.setText("Members");
 
@@ -337,7 +337,7 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
 
                 int sRowProject = ProjectsListJFrame.jTable1.getSelectedRow();
 
-                Object deletedMemberId = jTable1.getValueAt(sRow, 0);
+                int deletedMemberId = (int)jTable1.getValueAt(sRow, 0);
                 
                 projectMemberFile.delete((projectMember) -> projectMember.member_id.equals(deletedMemberId), (projectMember)-> projectMember.project_id.equals(ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0)));
                 
@@ -397,20 +397,21 @@ public class ProjectDetailsJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProjectDetailsJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectMemberJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProjectDetailsJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectMemberJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProjectDetailsJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectMemberJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProjectDetailsJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectMemberJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProjectDetailsJFrame().setVisible(true);
+                new ProjectMemberJFrame().setVisible(true);
             }
         });
     }

@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import utils.SessionStorage;
 import utils.fileObj.CRUD.*;
 import java.util.ArrayList;
+import modules.*;
 
 public class Login extends javax.swing.JFrame {
 
@@ -186,8 +187,22 @@ public class Login extends javax.swing.JFrame {
             if (!password.equals(usersList.get(0).password)) {
                 throw new Exception("Incorrect password.");
             }
-
-            SessionStorage.setData(usersList.get(0));
+            
+            dataTypes.User user = usersList.get(0);
+            
+            switch(user.role){
+                case "Admin":
+                    SessionStorage.setData(new Admin(user.getId(), user.name, user.email, user.password, user.role));
+                    break;
+                case "Tester":
+                    SessionStorage.setData(new Tester(user.getId(), user.name, user.email, user.password, user.role));
+                    break;
+                case "Project Manager":
+                    SessionStorage.setData(new Project_Manager(user.getId(), user.name, user.email, user.password, user.role));
+                    break;
+                default:
+                    SessionStorage.setData(new Developer(user.getId(), user.name, user.email, user.password, user.role));
+            }
 
             new project.ProjectsListJFrame().setVisible(true);
 

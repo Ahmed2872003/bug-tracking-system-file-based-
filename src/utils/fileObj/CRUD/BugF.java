@@ -64,6 +64,7 @@ public class BugF extends ObjF<dataTypes.Bug> {
         utils.Regex regex = new utils.Regex(fieldRegex);
         
         for (Object arr[] : newData) {
+            
             if (regex.test(String.valueOf(arr[0]))) {
                 Field f = getClass().getDeclaredField((String)arr[0] + "Regex");
                 
@@ -75,6 +76,8 @@ public class BugF extends ObjF<dataTypes.Bug> {
             }
 
         }
+        
+        
 
         return super.update(newData, predicates);
     }

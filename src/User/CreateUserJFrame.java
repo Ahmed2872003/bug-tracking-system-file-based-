@@ -200,7 +200,7 @@ public class CreateUserJFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Created successfully", "Created", JOptionPane.INFORMATION_MESSAGE);
 
             if(isNotAdmin)
-                project.ProjectDetailsJFrame.addUserToProject(data.getId());
+                project.ProjectMemberJFrame.addUserToProject(data.getId());
             
             
         }catch(Exception e){

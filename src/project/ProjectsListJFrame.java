@@ -37,7 +37,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         NewBtn = new javax.swing.JButton();
         deleteBtn = new javax.swing.JButton();
-        detailsBtn = new javax.swing.JButton();
+        membersBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Projects list");
@@ -96,26 +96,23 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(NewBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteBtn)))
+            .addComponent(deleteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(NewBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(NewBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(deleteBtn))
         );
 
-        detailsBtn.setText("Details");
-        detailsBtn.setEnabled(false);
-        detailsBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        membersBtn.setText("Members");
+        membersBtn.setEnabled(false);
+        membersBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                detailsBtnMouseClicked(evt);
+                membersBtnMouseClicked(evt);
             }
         });
 
@@ -125,11 +122,11 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(detailsBtn))
-                .addGap(0, 0, 0))
+                .addGap(15, 15, 15)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(membersBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,7 +138,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
                         .addGap(9, 9, 9)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(detailsBtn)))
+                        .addComponent(membersBtn)))
                 .addGap(0, 0, 0))
         );
 
@@ -150,9 +147,9 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(11, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,7 +210,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         
-        if(!detailsBtn.isEnabled() && evt.getClickCount() == 1) detailsBtn.setEnabled(true);
+        if(!membersBtn.isEnabled() && evt.getClickCount() == 1) membersBtn.setEnabled(true);
         
         if (evt.getClickCount() == 1) {
             deleteBtn.setEnabled(true);
@@ -239,7 +236,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
                     model.removeRow(sRow);
             
                     deleteBtn.setEnabled(false);
-                    detailsBtn.setEnabled(false);
+                    membersBtn.setEnabled(false);
                 }catch(Exception e){
                     JOptionPane.showConfirmDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     
@@ -249,9 +246,9 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_deleteBtnMouseClicked
 
-    private void detailsBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_detailsBtnMouseClicked
-            if(detailsBtn.isEnabled()) new ProjectDetailsJFrame().setVisible(true);
-    }//GEN-LAST:event_detailsBtnMouseClicked
+    private void membersBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_membersBtnMouseClicked
+            if(membersBtn.isEnabled()) new ProjectMemberJFrame().setVisible(true);
+    }//GEN-LAST:event_membersBtnMouseClicked
 
     
     public static void addToTable(Object data[]){
@@ -301,10 +298,10 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton NewBtn;
     private javax.swing.JButton deleteBtn;
-    private javax.swing.JButton detailsBtn;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JTable jTable1;
+    private javax.swing.JButton membersBtn;
     // End of variables declaration//GEN-END:variables
 }

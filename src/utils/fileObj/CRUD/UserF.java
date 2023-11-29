@@ -109,6 +109,7 @@ public class UserF extends ObjF<dataTypes.User> {
     
     
      public int update(Object newData[][], Predicate<dataTypes.User>... predicates) throws Exception{
+                 
          for(Object arr[]: newData){
             if(String.valueOf(arr[0]).equals("role")){
                 utils.Regex regex = new utils.Regex(this.regex);
@@ -118,6 +119,7 @@ public class UserF extends ObjF<dataTypes.User> {
             }
              
          }
+         
      
          return super.update(newData, predicates);
      }

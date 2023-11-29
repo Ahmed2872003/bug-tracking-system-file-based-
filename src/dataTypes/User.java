@@ -33,6 +33,7 @@ public class User implements Serializable, Identifiable{
         return this.role.equals(role);
         
     }
+    
     @Override
     public Integer getId(){ return id; }
     @Override

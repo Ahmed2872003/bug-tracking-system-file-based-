@@ -111,7 +111,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-        model.addRow(new Object[]{bug.getId().intValue(), bug.name, bug.type, bug.priority, bug.level, bug.developer_id.intValue(), devName, bug.tester_id.intValue(), testerName, bug.createdAt, bug.img, bug.status});
+        model.addRow(new Object[]{bug.getId().intValue(), bug.name, bug.type, bug.priority, bug.level, bug.developer_id, devName, bug.tester_id.intValue(), testerName, bug.createdAt, bug.img, bug.status});
     }
 
     private void checkAuth() {
@@ -389,7 +389,13 @@ public class BugsListJFrame extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         if (evt.getClickCount() == 1) {
             if (chStatBtn.getParent() != null) {
-                chStatBtn.setEnabled(true);
+                DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+                int sRow = jTable1.getSelectedRow();
+                
+                if(!(boolean)jTable1.getValueAt(sRow, 11))
+                    chStatBtn.setEnabled(true);
+                else
+                    chStatBtn.setEnabled(false);
             }
             if (updateBtn.getParent() != null) {
                 updateBtn.setEnabled(true);
@@ -434,7 +440,8 @@ public class BugsListJFrame extends javax.swing.JFrame {
                 bugFile.update(new Object[][]{{"status", !bugStatus}}, (bug) -> bug.getId().equals(bugId));
 
                 jTable1.setValueAt(!bugStatus, sRow, 11);
-
+                chStatBtn.setEnabled(false);
+                        
                 dataTypes.User testerData = new UserF().getByID(testerId);
 
                 if (!bugStatus) {
