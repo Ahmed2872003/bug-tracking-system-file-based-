@@ -45,20 +45,20 @@ public class bugJframe extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
         try {
-            nameField.setText(bugDetails.name);
+            nameField.setText(bugDetails.getName());
 
-            typeComBox.setSelectedItem(bugDetails.type);
+            typeComBox.setSelectedItem(bugDetails.getType());
 
-            priorityComBox.setSelectedItem(bugDetails.priority);
+            priorityComBox.setSelectedItem(bugDetails.getPriority());
 
-            lvlComBox.setSelectedItem(bugDetails.level);
+            lvlComBox.setSelectedItem(bugDetails.getLevel());
 
-            imgPathField.setText(bugDetails.img);
+            imgPathField.setText(bugDetails.getImgPath());
 
             for (int i = 0; i < jTable1.getRowCount(); i++) {
                 int devId = (int) jTable1.getValueAt(i, 0);
 
-                if (String.valueOf(devId).equals(String.valueOf(bugDetails.developer_id))) {
+                if (String.valueOf(devId).equals(String.valueOf(bugDetails.getDeveloper_id()))) {
                     jTable1.setRowSelectionInterval(i, i);
                     break;
                 }
@@ -83,10 +83,10 @@ public class bugJframe extends javax.swing.JFrame {
         int projectId = (int) jTableProjects.getValueAt(sRow, 0);
 
         try {
-            membersList = projectMemberFile.getMembers(projectId, (member) -> member.role.equals("Developer"));
+            membersList = projectMemberFile.getMembers(projectId, (member) -> member.getRole().equals("Developer"));
 
             for (dataTypes.User member : membersList) {
-                model.addRow(new Object[]{member.getId().intValue(), member.name});
+                model.addRow(new Object[]{member.getId().intValue(), member.getName()});
             }
         } catch (Exception e) {
             JFrameMessage.showErr(e);
@@ -401,7 +401,7 @@ public class bugJframe extends javax.swing.JFrame {
                 resetFields();
 
                 // Send email to inform the developer about Bug details
-                new Thread(() -> ((modules.Tester) SessionStorage.getData()).SendEmailToDev(developerDetails.email, bug)).start();
+                new Thread(() -> ((modules.Tester) SessionStorage.getData()).sendEmailToDev(developerDetails.getEmail(), bug)).start();
 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);

@@ -185,10 +185,10 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
             
             DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
             
-            if(u.role.equals("Admin")){
+            if(u.getRole().equals("Admin")){
                 ProjectF projectFile = new ProjectF();
                 
-                projectsList = projectFile.get((project)->project.admin_id.equals(u.getId()));
+                projectsList = projectFile.get((project)->project.getAdmin_id().equals(u.getId()));
             }else{
                 ProjectMemberF projectMembersFile  = new ProjectMemberF();
                 
@@ -196,7 +196,7 @@ public class ProjectsListJFrame extends javax.swing.JFrame {
             }
             
             for(dataTypes.Project project: projectsList){
-                model.addRow(new Object[]{ project.getId().intValue(), project.name });
+                model.addRow(new Object[]{ project.getId().intValue(), project.getName() });
             }
         }catch(Exception e){
             System.out.println(e);

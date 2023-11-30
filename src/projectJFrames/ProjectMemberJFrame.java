@@ -224,7 +224,7 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
                 
 
             for (dataTypes.User member: members) {
-                Object[] data = new Object[]{member.getId().intValue(), member.name, member.email, member.role};
+                Object[] data = new Object[]{member.getId().intValue(), member.getName(), member.getEmail(), member.getRole()};
 
                 model.addRow(data);
             }
@@ -289,12 +289,12 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
 
                 int deletedMemberId = (int)jTable1.getValueAt(sRow, 0);
                 
-                projectMemberFile.delete((projectMember) -> projectMember.member_id.equals(deletedMemberId), (projectMember)-> projectMember.project_id.equals(ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0)));
+                projectMemberFile.delete((projectMember) -> projectMember.getMember_id().equals(deletedMemberId), (projectMember)-> projectMember.getProject_id().equals(ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0)));
                 
                 if(deletedRole.equals("Developer"))
-                    BugFile.update(new Object[][] { { "developer_id", null } }, (bug)-> bug.developer_id != null ,(bug)-> bug.developer_id.equals(deletedMemberId));
+                    BugFile.update(new Object[][] { { "developer_id", null } }, (bug)-> bug.getDeveloper_id() != null ,(bug)-> bug.getDeveloper_id().equals(deletedMemberId));
                 else if(deletedRole.equals("Tester"))
-                    BugFile.delete((bug)-> bug.tester_id.equals(deletedMemberId));
+                    BugFile.delete((bug)-> bug.getTester_id().equals(deletedMemberId));
 
                 model.removeRow(sRow);
 
@@ -315,7 +315,7 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         dataTypes.User user = new UserF().getByID(userId);
 
 
-        model.addRow(new Object[]{user.getId().intValue(), user.name, user.email, user.role});
+        model.addRow(new Object[]{user.getId().intValue(), user.getName(), user.getEmail(), user.getRole()});
     }
 
     /**

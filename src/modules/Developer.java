@@ -14,15 +14,15 @@ public class Developer extends dataTypes.User {
     }
 
     public ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) throws Exception {
-        return new BugF().get((bug) -> bug.developer_id.equals(getId()), (bug) -> bug.project_id.equals(projectId));
+        return new BugF().get((bug) -> bug.getDeveloper_id().equals(getId()), (bug) -> bug.getProject_id().equals(projectId));
         
     }
 
-    public void ChangeBugStatus(Integer bugId) throws Exception {
+    public void changeBugStatus(Integer bugId) throws Exception {
         new BugF().update(new Object[][]{{"status", true}}, (bug) -> bug.getId().equals(bugId));
     }
 
-    public void SendEmailToTester(String testerEmail, Integer bugId) {
+    public void sendEmailToTester(String testerEmail, Integer bugId) {
         String message
                 = "Developer with data\n"
                 + "   ID: " + getId()

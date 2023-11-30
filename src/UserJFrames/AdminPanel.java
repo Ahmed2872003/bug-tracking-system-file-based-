@@ -154,7 +154,7 @@ public class AdminPanel extends javax.swing.JFrame {
 
             for (dataTypes.User user : new UserF().get(null)) {
                 if (!user.getId().equals(((dataTypes.User)SessionStorage.getData()).getId())) {
-                    model.addRow(new Object[]{user.getId(), user.name, user.email, user.password, user.role});
+                    model.addRow(new Object[]{user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()});
                 }
             }
         } catch (Exception e) {
@@ -203,7 +203,7 @@ public class AdminPanel extends javax.swing.JFrame {
     static void addUserToTable(dataTypes.User user) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-        Object userData[] = {user.getId(), user.name, user.email, user.password, user.role};
+        Object userData[] = {user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()};
 
         model.addRow(userData);
     }
@@ -224,8 +224,10 @@ public class AdminPanel extends javax.swing.JFrame {
         int row = evt.getFirstRow();
         String chengedFiled = jTable1.getColumnName(column).toLowerCase();
         String newValue = (String)jTable1.getValueAt(row, column);
-        int userId = (Integer)jTable1.getValueAt(row, 0);
         
+        Integer userId = (Integer)jTable1.getValueAt(row, 0);
+
+
         try{
             ((modules.Admin) SessionStorage.getData()).updateUser(new Object[][] { { chengedFiled, newValue } }, userId);
             

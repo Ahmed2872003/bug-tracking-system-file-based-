@@ -12,11 +12,11 @@ import utils.Identifiable;
  */
 public class User implements Serializable, Identifiable{
     
-    private Integer id;
-    public String name;
-    public String email;
-    public String password;
-    public String role;
+    protected Integer id;
+    protected String name;
+    protected String email;
+    protected String password;
+    protected String role;
     
     
     public User(final Integer id, final String name, final String email, final String password, final String role){
@@ -36,6 +36,12 @@ public class User implements Serializable, Identifiable{
     
     @Override
     public Integer getId(){ return id; }
+    public String getName(){ return name; }
+    public String getEmail(){ return email; }
+    public String getPassword(){ return password; }
+    public String getRole(){ return role; }
+    
+    
     @Override
     public void setId(Integer id) { this.id = id; }
     

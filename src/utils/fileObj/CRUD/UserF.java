@@ -5,6 +5,7 @@
 package utils.fileObj.CRUD;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.regex.*;
 import java.util.ArrayList;
 import java.util.function.Predicate;
@@ -24,17 +25,17 @@ public class UserF extends ObjF<dataTypes.User> {
             throw new Exception("User can not be null");
         }
 
-        if (newUser.name == null || newUser.email == null || newUser.password == null || newUser.name.isBlank() || newUser.email.isBlank() || newUser.password.isBlank()) {
+        if (newUser.getName() == null || newUser.getEmail() == null || newUser.getPassword() == null || newUser.getName().isBlank() || newUser.getEmail().isBlank() || newUser.getPassword().isBlank()) {
             throw new Exception("provide all user information");
         }
 
-        if (!utils.Email.isValidate(newUser.email)) {
+        if (!utils.Email.isValidate(newUser.getEmail())) {
             throw new Exception("Provide a valid email");
         }
 
         Pattern pattern = Pattern.compile(roleRegex);
 
-        Matcher matcher = pattern.matcher(newUser.role);
+        Matcher matcher = pattern.matcher(newUser.getRole());
 
         if (!matcher.matches()) {
             throw new Exception("valid roles are: " + roleRegex);
@@ -53,7 +54,7 @@ public class UserF extends ObjF<dataTypes.User> {
             ArrayList<dataTypes.User> storedUserList = (ArrayList<dataTypes.User>) ois.readObject();
 
             for (dataTypes.User storedUser : storedUserList) {
-                if (storedUser.email.equals(newUser.email) && storedUser.getId().intValue() != newUser.getId().intValue()) {
+                if (storedUser.getEmail().equals(newUser.getEmail()) && storedUser.getId().intValue() != newUser.getId().intValue()) {
                     closeInput();
                     throw new Exception("This email is used");
                 }
@@ -72,15 +73,15 @@ public class UserF extends ObjF<dataTypes.User> {
 
             ProjectMemberF ProjectMemberFile = new ProjectMemberF();
 
-            ProjectMemberFile.delete((projectMember) -> projectMember.member_id.equals(removedUser.getId()));
+            ProjectMemberFile.delete((projectMember) -> projectMember.getMember_id().equals(removedUser.getId()));
 
             // handling other files when deleting a user
-            switch (removedUser.role) {
+            switch (removedUser.getRole()) {
                 case "Admin": {
 
                     ProjectF projectFile = new ProjectF();
 
-                    projectFile.delete((project) -> project.admin_id.equals(removedUser.getId()));
+                    projectFile.delete((project) -> project.getAdmin_id().equals(removedUser.getId()));
 
                     break;
                 }
@@ -88,7 +89,7 @@ public class UserF extends ObjF<dataTypes.User> {
                 case "Tester": {
                     BugF bugFile = new BugF();
 
-                    bugFile.delete((bug) -> bug.tester_id.equals(removedUser.getId()));
+                    bugFile.update(new Object[][]{{"tester_id", null}}, (bug) -> bug.getTester_id().equals(removedUser.getId()));
 
                     break;
                 }
@@ -96,7 +97,7 @@ public class UserF extends ObjF<dataTypes.User> {
                 case "Developer": {
                     BugF bugFile = new BugF();
 
-                    bugFile.update(new Object[][]{{"developer_id", null}}, (bug) -> bug.developer_id.equals(removedUser.getId()));
+                    bugFile.update(new Object[][]{{"developer_id", null}}, (bug) -> bug.getDeveloper_id().equals(removedUser.getId()));
 
                     break;
                 }
@@ -108,27 +109,52 @@ public class UserF extends ObjF<dataTypes.User> {
 
     public int update(Object newData[][], Predicate<dataTypes.User>... predicates) throws Exception {
 
-        for (Object arr[] : newData) {
-            switch (String.valueOf(arr[0])) {
-                case "role": {
-                    utils.Regex regex = new utils.Regex(this.roleRegex);
+        int c = 0;
+        int roleIndex = -1;
 
-                    if (!regex.test((String) arr[1])) {
-                        throw new Exception("valid roles are: " + this.roleRegex);
-                    }
-                    break;
-                }
-                case "email": {
-                    if (!utils.Email.isValidate((String) arr[1])) {
-                        throw new Exception("Enter a valid email");
-                    }
-                    break;
-                }
+        for (int i = 0; i < newData.length; i++) {
+            if (newData[i][0].equals("role")) {
+                roleIndex = i;
+                break;
             }
-
         }
 
-        return super.update(newData, predicates);
+        if (roleIndex != -1) {
+            for (dataTypes.User user : get(predicates)) {
+                super.update(newData, (u) -> u.getId().equals(user.getId()));
+                c++;
+                if ((user.getRole().equals("Developer") || user.getRole().equals("Tester")) && !user.getRole().equals(newData[roleIndex][1])) {
+                    switch (user.getRole()) {
+                        case "Developer":
+                            new BugF().update(new Object[][]{{"developer_id", null}},(bug)-> bug.getDeveloper_id() != null, (bug) -> bug.getDeveloper_id().equals(user.getId()));
+                            break;
+                        case "Tester":
+                            new BugF().update(new Object[][]{{"tester_id", null}}, (bug)-> bug.getTester_id()!= null, (bug) -> bug.getTester_id().equals(user.getId()));
+                            break;
+                    }
+                }
+            }
+            return c;
+        } else {
+            return super.update(newData, predicates);
+        }
     }
 
 }
+
+//            switch (String.valueOf(arr[0])) {
+//                case "role": {
+//                    utils.Regex regex = new utils.Regex(this.roleRegex);
+//
+//                    if (!regex.test((String) arr[1])) {
+//                        throw new Exception("valid roles are: " + this.roleRegex);
+//                    }
+//                    break;
+//                }
+//                case "email": {
+//                    if (!utils.Email.isValidate((String) arr[1])) {
+//                        throw new Exception("Enter a valid email");
+//                    }
+//                    break;
+//                }
+//            }

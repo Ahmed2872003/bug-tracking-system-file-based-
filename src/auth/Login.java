@@ -178,33 +178,33 @@ public class Login extends javax.swing.JFrame {
                 throw new Exception("Both fields mustn't be empty.");
             }
 
-            ArrayList<dataTypes.User> usersList = new UserF().get((u->u.email.equals(email)));
+            ArrayList<dataTypes.User> usersList = new UserF().get((u->u.getEmail().equals(email)));
 
             if (usersList.isEmpty()) {
                 throw new Exception("Email isn't exist.");
             }
 
-            if (!password.equals(usersList.get(0).password)) {
+            if (!password.equals(usersList.get(0).getPassword())) {
                 throw new Exception("Incorrect password.");
             }
             
             dataTypes.User user = usersList.get(0);
             
-            switch(user.role){
+            switch(user.getRole()){
                 case "Admin":{
-                    SessionStorage.setData(new Admin(user.getId(), user.name, user.email, user.password, user.role));
+                    SessionStorage.setData(new Admin(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
                     new UserJFrames.AdminPanel().setVisible(true);
                     return;
                 }
                     
                 case "Tester":
-                    SessionStorage.setData(new Tester(user.getId(), user.name, user.email, user.password, user.role));
+                    SessionStorage.setData(new Tester(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
                     break;
                 case "Project Manager":
-                    SessionStorage.setData(new Project_Manager(user.getId(), user.name, user.email, user.password, user.role));
+                    SessionStorage.setData(new Project_Manager(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
                     break;
                 default:
-                    SessionStorage.setData(new Developer(user.getId(), user.name, user.email, user.password, user.role));
+                    SessionStorage.setData(new Developer(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
             }
 
             new projectJFrames.ProjectsListJFrame().setVisible(true);

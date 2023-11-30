@@ -140,6 +140,8 @@ abstract public class ObjF<T extends Identifiable> {
             openInput();
 
             ArrayList<T> list = (ArrayList<T>) ois.readObject();
+            
+            closeInput();
 
             return list.get(list.size() - 1).getId();
         }
@@ -190,11 +192,10 @@ abstract public class ObjF<T extends Identifiable> {
             closeInput();
 
             for (T obj : list) {
-                if (obj.getId().intValue() == id.intValue()) {
+                if (obj.getId().equals(id)) {
                     return obj;
                 }
             }
-            return null;
         }
         return null;
     }
@@ -260,6 +261,7 @@ abstract public class ObjF<T extends Identifiable> {
             for (int i = 0; i < storedList.size(); i++) {
                 if (matchFilters(storedList.get(i), predicates)) {
                     utils.ObjectPatcher.patch(storedList.get(i), newData);
+                    validateData(storedList.get(i));
                     c++;
                 }
             }

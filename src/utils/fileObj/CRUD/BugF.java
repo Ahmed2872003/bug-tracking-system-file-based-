@@ -30,25 +30,25 @@ public class BugF extends ObjF<dataTypes.Bug> {
             throw new Exception("Bug can not be null");
         }
 
-        if (newBug.name == null || newBug.name.isBlank() || newBug.project_id == null || newBug.tester_id == null) {
+        if (newBug.getName() == null || newBug.getName().isBlank() || newBug.getProject_id() == null) {
             throw new Exception("Provide all the data");
         }
         
         utils.Regex regex = new utils.Regex(typeRegex);
 
-        if (!regex.test(newBug.type)) {
+        if (!regex.test(newBug.getType())) {
             throw new Exception("Valid types are: " + typeRegex);
         }
 
         regex.val = priorityRegex;
 
-        if (!regex.test(newBug.priority)) {
+        if (!regex.test(newBug.getPriority())) {
             throw new Exception("Valid priority are: " + priorityRegex);
         }
 
         regex.val = levelRegex;
 
-        if (!regex.test(newBug.level)) {
+        if (!regex.test(newBug.getLevel())) {
             throw new Exception("Valid Levels are: " + levelRegex);
         }
     }
@@ -57,38 +57,13 @@ public class BugF extends ObjF<dataTypes.Bug> {
     protected void checkUnique(dataTypes.Bug newBug) throws Exception {
     }
     
-
-    public int update(Object newData[][], Predicate<dataTypes.Bug>... predicates) throws Exception {
-        String fieldRegex = "type|priority|level";
-        
-        utils.Regex regex = new utils.Regex(fieldRegex);
-        
-        for (Object arr[] : newData) {
-            
-            if (regex.test(String.valueOf(arr[0]))) {
-                Field f = getClass().getDeclaredField((String)arr[0] + "Regex");
-                
-                f.setAccessible(true);
-                
-                utils.Regex regex2 = new utils.Regex(f.get(null).toString());
-                
-                if(!regex2.test((String)arr[1])) throw new Exception("valid " + arr[0] + " are: " + f.get(null).toString());
-            }
-
-        }
-        
-        
-
-        return super.update(newData, predicates);
-    }
-
     
     public int delete(Predicate<dataTypes.Bug>... predicates) throws Exception{
         int c = 0;
         
         for(dataTypes.Bug removedBug: get(predicates)){
             c+=super.delete((bug)-> bug.getId().equals(removedBug.getId()));
-            Files.delete(Paths.get("Images\\" + removedBug.img));
+            Files.delete(Paths.get("Images\\" + removedBug.getImgPath()));
         }
         return c;
     }

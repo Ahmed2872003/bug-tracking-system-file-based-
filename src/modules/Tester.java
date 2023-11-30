@@ -26,25 +26,25 @@ public class Tester extends dataTypes.User {
         new BugF().update(new Object[][]{{"developer_id", developerId}}, (bug) -> bug.getId().equals(bugId));
     }
 
-    public void AttachScreenshotToBug(Integer bugId, String screenShotPath) throws Exception {
+    public void attachScreenshotOfBug(Integer bugId, String screenShotPath) throws Exception {
         new BugF().update(new Object[][]{{"img", screenShotPath}}, (bug) -> bug.getId().equals(bugId));
     }
 
-    public ArrayList<dataTypes.Bug> MonitorBugs(Integer projectId) throws Exception {
-        return new BugF().get((bug) -> bug.project_id.equals(projectId));
+    public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception {
+        return new BugF().get((bug) -> bug.getProject_id().equals(projectId));
     }
 
-    public boolean SendEmailToDev(String devEmail, dataTypes.Bug bug) {
+    public boolean sendEmailToDev(String devEmail, dataTypes.Bug bug) {
         String message
                 = "Bug details\n\n"
                 + "   ID: " + bug.getId()
-                + "\n   Name: " + bug.name
-                + "\n   Type: " + bug.type
-                + "\n   Priority: " + bug.priority
-                + "\n   Level: " + bug.level
+                + "\n   Name: " + bug.getName()
+                + "\n   Type: " + bug.getType()
+                + "\n   Priority: " + bug.getPriority()
+                + "\n   Level: " + bug.getLevel()
                 + "\n   Tester_id: " + getId()
                 + "\n   Tester_name: " + name
-                + "\n   CreatedAt: " + bug.createdAt;
+                + "\n   CreatedAt: " + bug.getCreatedAt();
         
         return utils.Email.send(devEmail, "Assigning a bug", message);
     }

@@ -16,11 +16,11 @@ public class Project_Manager extends dataTypes.User{
         super(id, name, email, password, role);
     }
 
-    public ArrayList<dataTypes.Bug> MonitorBugs(Integer projectId) throws Exception{
-        return new BugF().get((bug)-> bug.project_id.equals(projectId));
+    public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception{
+        return new BugF().get((bug)-> bug.getProject_id().equals(projectId));
     }
 
-    public void CheckPerformance(){} // ???
+    public void checkPerformance(){} // ???
     
     
 }

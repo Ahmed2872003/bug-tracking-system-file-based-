@@ -21,7 +21,7 @@ public class ProjectF extends ObjF<dataTypes.Project>{
         
         if(newProject == null) throw new Exception("Project can not be null");
             
-        if(newProject.name == null || newProject.name.isBlank() || newProject.admin_id == null)
+        if(newProject.getName() == null || newProject.getName().isBlank() || newProject.getAdmin_id() == null)
             throw new Exception("Provide all data");
         
         checkUnique(newProject);
@@ -33,7 +33,7 @@ public class ProjectF extends ObjF<dataTypes.Project>{
             openInput();
             
             for(dataTypes.Project storedProject: (ArrayList<dataTypes.Project>)ois.readObject()){
-                if(storedProject.name.equals(newProject.name) && storedProject.admin_id.equals(newProject.admin_id) && !storedProject.getId().equals(newProject.getId())){
+                if(storedProject.getName().equals(newProject.getName()) && storedProject.getAdmin_id().equals(newProject.getAdmin_id()) && !storedProject.getId().equals(newProject.getId())){
                     closeInput();
                     throw new Exception("This project has been created before");
                 }
@@ -50,9 +50,9 @@ public class ProjectF extends ObjF<dataTypes.Project>{
         
             c = super.delete((project)-> project.getId().equals(removedProject.getId()));
             
-            new BugF().delete(bug-> bug.project_id.equals(removedProject.getId()));
+            new BugF().delete(bug-> bug.getProject_id().equals(removedProject.getId()));
             
-            new ProjectMemberF().delete((projectMember) -> projectMember.project_id.equals(removedProject.getId()));
+            new ProjectMemberF().delete((projectMember) -> projectMember.getProject_id().equals(removedProject.getId()));
             
         }
         return c;
