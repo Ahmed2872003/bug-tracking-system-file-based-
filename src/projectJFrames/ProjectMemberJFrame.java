@@ -27,6 +27,7 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
      * Creates new form ProjectDetailsJFrame
      */
     public ProjectMemberJFrame() {
+        currUser = SessionStorage.getData();
         initComponents();
         checkAuth();
     }
@@ -286,15 +287,12 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
                 BugF BugFile = new BugF();
 
                 int sRowProject = ProjectsListJFrame.jTable1.getSelectedRow();
-
+                
+                int projectId = (int)ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0);
+                
                 int deletedMemberId = (int)jTable1.getValueAt(sRow, 0);
                 
-                projectMemberFile.delete((projectMember) -> projectMember.getMember_id().equals(deletedMemberId), (projectMember)-> projectMember.getProject_id().equals(ProjectsListJFrame.jTable1.getValueAt(sRowProject, 0)));
-                
-                if(deletedRole.equals("Developer"))
-                    BugFile.update(new Object[][] { { "developer_id", null } }, (bug)-> bug.getDeveloper_id() != null ,(bug)-> bug.getDeveloper_id().equals(deletedMemberId));
-                else if(deletedRole.equals("Tester"))
-                    BugFile.delete((bug)-> bug.getTester_id().equals(deletedMemberId));
+                ((modules.Admin) currUser).deleteUserFromProject(deletedMemberId, projectId);
 
                 model.removeRow(sRow);
 
@@ -354,6 +352,8 @@ public class ProjectMemberJFrame extends javax.swing.JFrame {
         });
     }
 
+    
+    private static Object currUser;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBtn;
     private javax.swing.JButton deleteBtn;

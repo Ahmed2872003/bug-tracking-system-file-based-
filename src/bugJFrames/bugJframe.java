@@ -438,7 +438,8 @@ public class bugJframe extends javax.swing.JFrame {
 
                 this.dispose();
                 
-                currTesterData.sendEmailToDev(devData.getEmail(), bugDetails);
+                
+                new Thread(()->currTesterData.sendEmailToDev(devData.getEmail(), bugDetails)).start();
 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);

@@ -28,15 +28,22 @@ public class Admin extends dataTypes.User {
         return new UserF().create(user);
     }
     
+    public void deleteUser(Integer userId) throws Exception {
+        new UserF().delete((user) -> user.getId().equals(userId));
+    }
+    
+    
     public void addUserToProject(Integer userId, Integer projectId) throws Exception{
         new ProjectMemberF().create(new ProjectMember(projectId, userId));
+    }
+    
+    public void deleteUserFromProject(Integer memberId, Integer projectId) throws Exception{
+        new ProjectMemberF().delete((pm)-> pm.getMember_id().equals(memberId) && pm.getProject_id().equals(projectId));
     }
 
     public void updateUser(Object newData[][], Integer userId) throws Exception {
         new UserF().update(newData, (user) -> user.getId().equals(userId));
     }
 
-    public void deleteUser(Integer userId) throws Exception {
-        new UserF().delete((user) -> user.getId().equals(userId));
-    }
+    
 }

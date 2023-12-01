@@ -6,6 +6,7 @@ package utils.fileObj.CRUD;
 
 import java.util.ArrayList;
 import java.util.function.Predicate;
+import projectJFrames.ProjectsListJFrame;
 
 /**
  *
@@ -91,5 +92,35 @@ public class ProjectMemberF extends ObjF<dataTypes.ProjectMember> {
         return super.create(projectMember);
     }
  
+    public int delete(Predicate<dataTypes.ProjectMember> ...predicates) throws Exception{
+        
+        BugF bugF = new BugF();
+        UserF userF = new UserF();
+        
+        int c = 0;
+        
+        for(dataTypes.ProjectMember PM: get(predicates)){
+            
+            super.delete((projectMember)-> projectMember.getId().equals(PM.getId())); 
+            
+            c++;
+            
+            
+            switch(userF.getByID(PM.getMember_id()).getRole()){
+                case "Developer":{
+                    bugF.update(new Object[][] { { "developer_id", null } }, (bug)-> bug.getDeveloper_id() != null && bug.getDeveloper_id().equals(PM.getMember_id()) && bug.getProject_id().equals(PM.getProject_id()));
+                    break;
+                }
+                
+                case "Tester":{
+                    bugF.update(new Object[][] { { "tester_id", null } }, (bug)-> bug.getTester_id() != null && bug.getTester_id().equals(PM.getMember_id()) && bug.getProject_id().equals(PM.getProject_id()));
+                }
+            }
+            
+        }
+        
+        return c;
+    }
+    
             
 }

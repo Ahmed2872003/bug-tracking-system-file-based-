@@ -98,16 +98,20 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         if (user != null) {
             devName = user.getName();
+            
+            if (user.getId().intValue() == ((User) currUser).getId().intValue()) {
+                devName = "You";
+            }
         }
 
         user = userFile.getByID(bug.getTester_id());
 
         if (user != null) {
             testerName = user.getName();
-        }
 
-        if (user != null && user.getId().intValue() == ((User) currUser).getId().intValue()) {
-            testerName = "You";
+            if (user.getId().intValue() == ((User) currUser).getId().intValue()) {
+                testerName = "You";
+            }
         }
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
@@ -467,12 +471,13 @@ public class BugsListJFrame extends javax.swing.JFrame {
                 jTable1.setValueAt(NewBugStatus, sRow, 11);
 
                 int checkedBugNum = Integer.valueOf(checkedBugsJText.getText());
-                
-                if(NewBugStatus) checkedBugsJText.setText(String.valueOf(checkedBugNum +1));
-                
-                else checkedBugsJText.setText(String.valueOf(checkedBugNum - 1));
-                
-                
+
+                if (NewBugStatus) {
+                    checkedBugsJText.setText(String.valueOf(checkedBugNum + 1));
+                } else {
+                    checkedBugsJText.setText(String.valueOf(checkedBugNum - 1));
+                }
+
                 if (testerId != null && NewBugStatus) {
                     new Thread(() -> {
                         try {

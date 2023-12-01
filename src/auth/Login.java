@@ -10,9 +10,6 @@ package auth;
  */
 import javax.swing.*;
 import UserJFrames.CreateUserJFrame;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import utils.SessionStorage;
 import utils.fileObj.CRUD.*;
 import java.util.ArrayList;
@@ -241,8 +238,6 @@ public class Login extends javax.swing.JFrame {
         }
 
     }
-    
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
