@@ -5,14 +5,12 @@
 package bugJFrames;
 
 import dataTypes.User;
-import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.SessionStorage;
 import messages.JFrameMessage;
-import java.nio.file.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -28,6 +26,7 @@ public class bugJframe extends javax.swing.JFrame {
      * Creates new form bugJframe
      */
     public bugJframe(dataTypes.Bug bugDetails) {
+        currTesterData = ((modules.Tester)SessionStorage.getData());
         initComponents();
 
         initTable();
@@ -368,12 +367,6 @@ public class bugJframe extends javax.swing.JFrame {
     private void createBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createBtnMouseClicked
         if (validateData()) {
 
-            String destImgName = utils.GenUniqueFName.generate(imgPathField.getText());
-
-            Path srcImgPath = Paths.get(imgPathField.getText());
-
-            Path destImgPath = Paths.get("Images\\" + destImgName);
-
             javax.swing.JTable projectsTable = projectJFrames.ProjectsListJFrame.jTable1;
 
             int CurrProjectId = (int) projectsTable.getValueAt(projectsTable.getSelectedRow(), 0);
@@ -381,19 +374,19 @@ public class bugJframe extends javax.swing.JFrame {
             int assignedDevId = (int) jTable1.getValueAt(jTable1.getSelectedRow(), 0);
 
             try {
-                BugF bugFile = new BugF();
 
-                dataTypes.Bug bug = bugFile.create(new dataTypes.Bug(null, nameField.getText(), (String) typeComBox.getSelectedItem(), (String) priorityComBox.getSelectedItem(), (String) lvlComBox.getSelectedItem(), CurrProjectId, assignedDevId, ((User) SessionStorage.getData()).getId(), destImgName));
+                dataTypes.Bug bug = currTesterData.defineBug(nameField.getText(), (String) typeComBox.getSelectedItem(), (String) priorityComBox.getSelectedItem(), (String) lvlComBox.getSelectedItem(), CurrProjectId);
+
+                currTesterData.attachScreenshotOfBug(bug, imgPathField.getText());
+                
+                currTesterData.assignBugToDev(bug.getId(),assignedDevId);
+                
+                bug.setDeveloper_id(assignedDevId);
 
                 BugsListJFrame.addTableRow(bug);
 
-                if (!new File("Images").isDirectory()) {
-                    Files.createDirectory(Paths.get("Images"));
-                }
-
-                Files.copy(srcImgPath, destImgPath);
-
                 dataTypes.User developerDetails = new UserF().getByID(assignedDevId);
+
                 dataTypes.User testerDatails = ((dataTypes.User) SessionStorage.getData());
 
                 JOptionPane.showMessageDialog(this, "Added successfully", "Added", JOptionPane.INFORMATION_MESSAGE);
@@ -401,7 +394,7 @@ public class bugJframe extends javax.swing.JFrame {
                 resetFields();
 
                 // Send email to inform the developer about Bug details
-                new Thread(() -> ((modules.Tester) SessionStorage.getData()).sendEmailToDev(developerDetails.getEmail(), bug)).start();
+                new Thread(() -> currTesterData.sendEmailToDev(developerDetails.getEmail(), bug)).start();
 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
@@ -418,40 +411,34 @@ public class bugJframe extends javax.swing.JFrame {
             int bugId = (int) bugsTable.getValueAt(bugsTable.getSelectedRow(), 0);
 
             int devId = (int) jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+            
+            int currTesterId = (int) ((dataTypes.User)SessionStorage.getData()).getId();
 
-            String destImgName = imgPathField.getText();
-
-            Path oldPath = Paths.get("Images\\" + bugsTable.getValueAt(bugsTable.getSelectedRow(), 10));
-
-            boolean isImgSame = destImgName.equals(oldPath.getFileName().toString());
-
-            if (!isImgSame) {
-                destImgName = utils.GenUniqueFName.generate(destImgName);
-            }
+            String srcImgPath = imgPathField.getText();
 
             try {
                 BugF bugFile = new BugF();
 
-                Object[][] newBugData = new Object[][]{{"name", nameField.getText()}, {"type", typeComBox.getSelectedItem().toString()}, {"priority", priorityComBox.getSelectedItem().toString()}, {"level", lvlComBox.getSelectedItem().toString()}, {"img", destImgName}, {"developer_id", devId}};
-
+                Object[][] newBugData = new Object[][]{{"name", nameField.getText()}, {"type", typeComBox.getSelectedItem().toString()}, {"priority", priorityComBox.getSelectedItem().toString()}, {"level", lvlComBox.getSelectedItem().toString()}, {"developer_id", devId}, { "tester_id", currTesterId }};
+                
+               
                 bugFile.update(newBugData, (bug) -> bug.getId().equals(bugId));
-
-                if (!isImgSame) {
-                    Path srcPath = Paths.get(imgPathField.getText());
-                    Path destPath = Paths.get("Images\\" + destImgName);
-
-                    Files.deleteIfExists(oldPath);
-
-                    Files.copy(srcPath, destPath);
-                }
-
+                
+                currTesterData.attachScreenshotOfBug(bugFile.getByID(bugId), srcImgPath);
+                
                 BugsListJFrame.initTable();
+                
+                dataTypes.Bug bugDetails = new BugF().getByID(bugId);
+                
+                dataTypes.User devData = new UserF().getByID(devId);
 
                 JOptionPane.showMessageDialog(null, "Updated successfully", "Updated", JOptionPane.INFORMATION_MESSAGE);
 
                 BugsListJFrame.updateBtn.setEnabled(false);
 
                 this.dispose();
+                
+                currTesterData.sendEmailToDev(devData.getEmail(), bugDetails);
 
             } catch (Exception e) {
                 messages.JFrameMessage.showErr(e);
@@ -515,6 +502,8 @@ public class bugJframe extends javax.swing.JFrame {
         });
     }
 
+    
+    private static modules.Tester currTesterData;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createBtn;
     private javax.swing.JTextField imgPathField;

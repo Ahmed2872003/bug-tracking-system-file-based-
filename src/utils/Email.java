@@ -31,9 +31,8 @@ public class Email {
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        prop.put("mail.smtp.starttls.enable", "true");
 
-        // creating session object to get properties 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -45,7 +44,7 @@ public class Email {
             MimeMessage message = new MimeMessage(session);
 
             message.setFrom(new InternetAddress(username));
- 
+
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 
             message.setSubject(subject);

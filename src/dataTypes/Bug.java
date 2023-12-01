@@ -53,6 +53,8 @@ public class Bug implements Serializable, utils.Identifiable {
 
     @Override
     public void setId(Integer id) { this.id = id; }
+    public void setImg(String img) { this.img = img; }
+    public void setDeveloper_id(Integer devId) { this.developer_id = devId; }
 
 
 }

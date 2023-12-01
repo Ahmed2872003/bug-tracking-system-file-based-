@@ -180,7 +180,7 @@ abstract public class ObjF<T extends Identifiable> {
 
         closeOutput();
         
-        return getByID(LastInsertedId);
+        return obj;
     }
 
     public T getByID(Integer id) throws IOException, ClassNotFoundException {
@@ -277,5 +277,6 @@ abstract public class ObjF<T extends Identifiable> {
         }
         return c;
     }
-
+    
+    
 }

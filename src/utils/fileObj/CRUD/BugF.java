@@ -63,7 +63,8 @@ public class BugF extends ObjF<dataTypes.Bug> {
         
         for(dataTypes.Bug removedBug: get(predicates)){
             c+=super.delete((bug)-> bug.getId().equals(removedBug.getId()));
-            Files.delete(Paths.get("Images\\" + removedBug.getImgPath()));
+            if(Files.isRegularFile(Paths.get("Images\\" + removedBug.getImgPath())))
+                Files.delete(Paths.get("Images\\" + removedBug.getImgPath()));
         }
         return c;
     }

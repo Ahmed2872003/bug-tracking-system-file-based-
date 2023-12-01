@@ -24,6 +24,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
      * Creates new form BugJFrame
      */
     public BugsListJFrame() {
+        currUser = SessionStorage.getData();
         initComponents();
         checkAuth();
         initTable();
@@ -51,7 +52,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
         ArrayList<dataTypes.Bug> bugsList = null;
 
-        User userData = ((User) SessionStorage.getData());
+        User userData = ((User) currUser);
 
         javax.swing.JTable jTableProjects = projectJFrames.ProjectsListJFrame.jTable1;
 
@@ -62,7 +63,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
         try {
             switch (userData.getRole()) {
                 case "Developer": {
-                    bugsList = BugFile.get((bug) -> bug.getDeveloper_id() != null, (bug) -> bug.getDeveloper_id().equals(userData.getId()), (bug) -> bug.getProject_id().equals(projectId));
+                    bugsList = ((modules.Developer) currUser).getAssignedBugs(projectId);
                     break;
                 }
                 default: {
@@ -105,7 +106,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
             testerName = user.getName();
         }
 
-        if (user != null && user.getId().intValue() == ((User) SessionStorage.getData()).getId().intValue()) {
+        if (user != null && user.getId().intValue() == ((User) currUser).getId().intValue()) {
             testerName = "You";
         }
 
@@ -115,7 +116,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
     }
 
     private void checkAuth() {
-        User u = ((User) SessionStorage.getData());
+        User u = ((User) currUser);
 
         if (!u.getRole().equals("Project Manager")) {
             jPanel2.remove(AdminJPanel);
@@ -389,14 +390,8 @@ public class BugsListJFrame extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         if (evt.getClickCount() == 1) {
             if (chStatBtn.getParent() != null) {
-                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-                int sRow = jTable1.getSelectedRow();
 
-                if (!(boolean) jTable1.getValueAt(sRow, 11)) {
-                    chStatBtn.setEnabled(true);
-                } else {
-                    chStatBtn.setEnabled(false);
-                }
+                chStatBtn.setEnabled(true);
             }
             if (updateBtn.getParent() != null) {
                 updateBtn.setEnabled(true);
@@ -433,22 +428,20 @@ public class BugsListJFrame extends javax.swing.JFrame {
 
             Object testerId = jTable1.getValueAt(sRow, 7);
 
-            dataTypes.User currDeveloperData = ((dataTypes.User) SessionStorage.getData());
+            dataTypes.User currDeveloperData = ((dataTypes.User) currUser);
 
             BugF bugFile = new BugF();
 
             try {
-                ((modules.Developer) SessionStorage.getData()).changeBugStatus(bugId);
+                ((modules.Developer) currUser).changeBugStatus(bugId);
 
                 jTable1.setValueAt(NewBugStatus, sRow, 11);
 
-                chStatBtn.setEnabled(false);
-
-                if (testerId != null) {
+                if (testerId != null && NewBugStatus) {
                     new Thread(() -> {
                         try {
-                            dataTypes.User testerData = new UserF().getByID((Integer)testerId);
-                            ((modules.Developer) SessionStorage.getData()).sendEmailToTester(testerData.getEmail(), bugId);
+                            dataTypes.User testerData = new UserF().getByID((Integer) testerId);
+                            ((modules.Developer) currUser).sendEmailToTester(testerData.getEmail(), bugId);
                         } catch (Exception e) {
                             messages.JFrameMessage.showErr(e);
                         }
@@ -478,7 +471,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
         try {
             dataTypes.Bug bug = bugFile.getByID(bugId);
 
-            if (bug.getTester_id() != null && bug.getTester_id().intValue() != ((User) SessionStorage.getData()).getId().intValue()) {
+            if (bug.getTester_id() != null && bug.getTester_id().intValue() != ((User) currUser).getId().intValue()) {
                 updateBtn.setEnabled(false);
                 return;
             }
@@ -526,6 +519,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
         });
     }
 
+    private static Object currUser;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel AdminJPanel;
     private javax.swing.JPanel bugOperationsJPanel;
