@@ -421,8 +421,7 @@ public class bugJframe extends javax.swing.JFrame {
 
                 Object[][] newBugData = new Object[][]{{"name", nameField.getText()}, {"type", typeComBox.getSelectedItem().toString()}, {"priority", priorityComBox.getSelectedItem().toString()}, {"level", lvlComBox.getSelectedItem().toString()}, {"developer_id", devId}, { "tester_id", currTesterId }};
                 
-               
-                bugFile.update(newBugData, (bug) -> bug.getId().equals(bugId));
+                currTesterData.updateBug(newBugData, bugId);
                 
                 currTesterData.attachScreenshotOfBug(bugFile.getByID(bugId), srcImgPath);
                 

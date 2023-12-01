@@ -59,11 +59,10 @@ public class Tester extends dataTypes.User {
             destinitionPath = Paths.get(dirName.getPath() + "\\" + generatedImgName);
 
             Files.copy(srcImgPath, destinitionPath); // copies the file from srcPath to dest path
-            
-            if(bug.getImgPath() != null && Files.isRegularFile(Paths.get(dirName.getPath() + "\\" +bug.getImgPath()))){ // delete the previous screenshot of a bug
-                Files.delete(Paths.get(dirName.getPath() + "\\" +bug.getImgPath()));
+
+            if (bug.getImgPath() != null && Files.isRegularFile(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()))) { // delete the previous screenshot of a bug
+                Files.delete(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()));
             }
-            
 
             new BugF().update(new Object[][]{{"img", generatedImgName}}, (b) -> b.getId().equals(bug.getId())); // update the bug with attached screenshot
 
@@ -72,6 +71,10 @@ public class Tester extends dataTypes.User {
         } else {
             throw new Exception("Provide a valid path");
         }
+    }
+
+    public void updateBug(Object newData[][], Integer bugId) throws Exception {
+        new BugF().update(newData, (bug) -> bug.getId().equals(bugId));
     }
 
     public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception {
