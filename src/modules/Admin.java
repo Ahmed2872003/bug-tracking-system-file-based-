@@ -21,7 +21,7 @@ public class Admin extends dataTypes.User {
     }
 
     public ArrayList<dataTypes.Bug> viewAllBugs(Integer projectId) throws Exception {
-        return new BugF().get((bug) -> bug.getId().equals(projectId));
+        return new BugF().get((bug) -> bug.getProject_id().equals(projectId));
     }
 
     public dataTypes.User addUser(dataTypes.User user) throws Exception {
