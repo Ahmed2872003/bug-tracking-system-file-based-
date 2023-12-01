@@ -195,7 +195,7 @@ public class Login extends javax.swing.JFrame {
             switch(user.getRole()){
                 case "Admin":{
                     SessionStorage.setData(new Admin(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
-                    new UserJFrames.AdminPanel().setVisible(true);
+                    new UserJFrames.AdminPanelJFrame().setVisible(true);
                     return;
                 }
                     
@@ -232,8 +232,8 @@ public class Login extends javax.swing.JFrame {
     public static void main(String args[]) {
 
         try {
-            new Login().setVisible(true);
-            
+            new Login().setVisible(true);       
+
             
             
         } catch (Exception e) {

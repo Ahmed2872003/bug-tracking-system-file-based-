@@ -188,7 +188,7 @@ public class CreateUserJFrame extends javax.swing.JFrame {
             
             dataTypes.User createdUser = new UserF().create(data);
             
-            if(adminCreateUser) AdminPanel.addUserToTable(createdUser);
+            if(adminCreateUser) AdminPanelJFrame.addUserToTable(createdUser);
             
             JOptionPane.showMessageDialog(null, "Created successfully", "Created", JOptionPane.INFORMATION_MESSAGE);
 
