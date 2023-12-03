@@ -384,6 +384,7 @@ public class bugJframe extends javax.swing.JFrame {
                 bug.setDeveloper_id(assignedDevId);
 
                 BugsListJFrame.addTableRow(bug);
+                BugsListJFrame.totalBugsJText.setText(String.valueOf(Integer.valueOf(BugsListJFrame.totalBugsJText.getText()) + 1));
 
                 dataTypes.User developerDetails = new UserF().getByID(assignedDevId);
 

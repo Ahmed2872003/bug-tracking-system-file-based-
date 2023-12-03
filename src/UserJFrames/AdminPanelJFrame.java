@@ -153,7 +153,7 @@ public class AdminPanelJFrame extends javax.swing.JFrame {
         try {
 
             for (dataTypes.User user : new UserF().get()) {
-                if (!user.getId().equals(((dataTypes.User)SessionStorage.getData()).getId())) {
+                if (!user.getId().equals(((dataTypes.User) SessionStorage.getData()).getId())) {
                     model.addRow(new Object[]{user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()});
                 }
             }
@@ -175,6 +175,7 @@ public class AdminPanelJFrame extends javax.swing.JFrame {
 
         if (deleteBtn.isEnabled()) {
             try {
+
                 ((modules.Admin) SessionStorage.getData()).deleteUser((Integer) jTable1.getValueAt(sRow, 0));
 
                 model.removeRow(sRow);
@@ -183,6 +184,7 @@ public class AdminPanelJFrame extends javax.swing.JFrame {
 
                 JOptionPane.showMessageDialog(this, "Deleted successfully", "Deleted", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
+                e.printStackTrace();
                 messages.JFrameMessage.showErr(e);
             }
         }
@@ -207,7 +209,7 @@ public class AdminPanelJFrame extends javax.swing.JFrame {
 
         model.addRow(userData);
     }
-    
+
     private void tModelEvents() {
         jTable1.getModel().addTableModelListener(new TableModelListener() {
             @Override
@@ -218,24 +220,21 @@ public class AdminPanelJFrame extends javax.swing.JFrame {
             }
         });
     }
-    
-    private static void jTable1Chnage(TableModelEvent evt){
+
+    private static void jTable1Chnage(TableModelEvent evt) {
         int column = evt.getColumn();
         int row = evt.getFirstRow();
         String chengedFiled = jTable1.getColumnName(column).toLowerCase();
-        String newValue = (String)jTable1.getValueAt(row, column);
-        
-        Integer userId = (Integer)jTable1.getValueAt(row, 0);
+        String newValue = (String) jTable1.getValueAt(row, column);
 
+        Integer userId = (Integer) jTable1.getValueAt(row, 0);
 
-        try{
-            ((modules.Admin) SessionStorage.getData()).updateUser(new Object[][] { { chengedFiled, newValue } }, userId);
-            
-            JOptionPane.showMessageDialog(null, "Updated successfully","Updated" ,JOptionPane.INFORMATION_MESSAGE);
-            
-            
-            
-        }catch(Exception e){
+        try {
+            ((modules.Admin) SessionStorage.getData()).updateUser(new Object[][]{{chengedFiled, newValue}}, userId);
+
+            JOptionPane.showMessageDialog(null, "Updated successfully", "Updated", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
             messages.JFrameMessage.showErr(e);
         }
     }

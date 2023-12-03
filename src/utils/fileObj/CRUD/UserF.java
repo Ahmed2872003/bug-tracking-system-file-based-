@@ -68,12 +68,13 @@ public class UserF extends ObjF<dataTypes.User> {
         int c = 0;
 
         for (dataTypes.User removedUser : get(predicates)) {
-
-            c = super.delete((user) -> user.getId().equals(removedUser.getId())); // remove the user
-
+            
             ProjectMemberF ProjectMemberFile = new ProjectMemberF();
 
-            ProjectMemberFile.delete((projectMember) -> projectMember.getMember_id().equals(removedUser.getId()));
+            ProjectMemberFile.delete((projectMember) -> projectMember.getMember_id().equals(removedUser.getId())); // remove user from all projects
+
+            c = super.delete((user) -> user.getId().equals(removedUser.getId())); // remove the user
+            
 
             // handling other files when deleting a user
             switch (removedUser.getRole()) {
@@ -89,7 +90,7 @@ public class UserF extends ObjF<dataTypes.User> {
                 case "Tester": {
                     BugF bugFile = new BugF();
 
-                    bugFile.update(new Object[][]{{"tester_id", null}}, (bug) -> bug.getTester_id().equals(removedUser.getId()));
+                    bugFile.update(new Object[][]{{"tester_id", null}}, (bug) -> bug.getTester_id()!= null && bug.getTester_id().equals(removedUser.getId()));
 
                     break;
                 }
@@ -97,7 +98,7 @@ public class UserF extends ObjF<dataTypes.User> {
                 case "Developer": {
                     BugF bugFile = new BugF();
 
-                    bugFile.update(new Object[][]{{"developer_id", null}}, (bug) -> bug.getDeveloper_id().equals(removedUser.getId()));
+                    bugFile.update(new Object[][]{{"developer_id", null}}, (bug) -> bug.getDeveloper_id() != null && bug.getDeveloper_id().equals(removedUser.getId()));
 
                     break;
                 }

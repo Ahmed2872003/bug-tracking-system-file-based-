@@ -581,7 +581,7 @@ public class BugsListJFrame extends javax.swing.JFrame {
     public static javax.swing.JTable jTable1;
     private javax.swing.JButton performanceBtn;
     private javax.swing.JPanel statPanel;
-    private static javax.swing.JLabel totalBugsJText;
+    public static javax.swing.JLabel totalBugsJText;
     public static javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 }
