@@ -16,7 +16,7 @@ public class dataTypes {
     
     @Override
     public String toString() {
-
+        
         ArrayList<Field> fields = new ArrayList<Field>(Arrays.asList(this.getClass().getDeclaredFields()));
 
         String strRepresentation = "{";
@@ -35,7 +35,7 @@ public class dataTypes {
             }
 
         }
-
+        
         strRepresentation += " }";
 
         return strRepresentation;
