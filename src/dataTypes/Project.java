@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 
 
-public class Project implements Serializable, utils.Identifiable {
+public class Project extends dataTypes implements Serializable, utils.Identifiable {
     protected Integer id;
     protected String name;
     protected Integer admin_id;

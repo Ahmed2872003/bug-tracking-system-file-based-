@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author ahmed
  */
-public class ProjectMember implements Serializable, utils.Identifiable{
+public class ProjectMember extends dataTypes implements Serializable, utils.Identifiable{
     protected Integer id;
     protected Integer project_id;
     protected Integer member_id;

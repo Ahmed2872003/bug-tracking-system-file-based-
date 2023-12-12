@@ -276,7 +276,5 @@ abstract public class ObjF<T extends Identifiable> {
 
         }
         return c;
-    }
-    
-    
+    }  
 }

@@ -10,7 +10,7 @@ import utils.Identifiable;
  *
  * @author ahmed
  */
-public class User implements Serializable, Identifiable{
+public class User extends dataTypes implements Serializable, Identifiable{
     
     protected Integer id;
     protected String name;
