@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 import utils.fileObj.CRUD.BugF;
 
-public class Tester extends dataTypes.User {
+public class Tester extends dataTypes.User implements ITester {
 
     public Tester(final Integer id, final String name, final String email, final String password, final String role) {
         super(id, name, email, password, role);
     }
 
+    @Override
     public dataTypes.Bug defineBug(final String name, final String type, final String priority, final String level, final Integer project_id) throws Exception {
 
         dataTypes.Bug bug = new dataTypes.Bug(null, name, type, priority, level, project_id, null, getId(), null);
@@ -27,10 +28,12 @@ public class Tester extends dataTypes.User {
         return bug;
     }
 
+    @Override
     public void assignBugToDev(Integer bugId, Integer developerId) throws Exception {
         new BugF().update(new Object[][]{{"developer_id", developerId}}, (b) -> b.getId().equals(bugId));
     }
 
+    @Override
     public void attachScreenshotOfBug(dataTypes.Bug bug, String screenShotPath) throws Exception {
 
         if (bug.getImgPath() != null && screenShotPath.equals(bug.getImgPath())) {
@@ -73,14 +76,17 @@ public class Tester extends dataTypes.User {
         }
     }
 
+    @Override
     public void updateBug(Object newData[][], Integer bugId) throws Exception {
         new BugF().update(newData, (bug) -> bug.getId().equals(bugId));
     }
 
+    @Override
     public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception {
         return new BugF().get((bug) -> bug.getProject_id().equals(projectId));
     }
 
+    @Override
     public boolean sendEmailToDev(String devEmail, dataTypes.Bug bug) {
         String message
                 = "Bug details\n\n"

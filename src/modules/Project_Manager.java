@@ -12,16 +12,18 @@ import utils.fileObj.CRUD.*;
  *
  * @author ahmed
  */
-public class Project_Manager extends dataTypes.User {
+public class Project_Manager extends dataTypes.User implements IProjectManager {
 
     public Project_Manager(final Integer id, final String name, final String email, final String password, final String role) {
         super(id, name, email, password, role);
     }
 
+    @Override
     public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception {
         return new BugF().get((bug) -> bug.getProject_id().equals(projectId));
     }
 
+    @Override
     public ArrayList<Object[]> checkTesterPerformance(Integer projectId) throws Exception {
 
         ArrayList<dataTypes.ProjectMember> projectMembers = new ProjectMemberF().get((pm) -> pm.getProject_id().equals(projectId)); // Get all the project members
@@ -43,6 +45,7 @@ public class Project_Manager extends dataTypes.User {
 
     }
 
+    @Override
     public ArrayList<Object[]> checkDevPerformance(Integer projectId) throws Exception {
         ArrayList<dataTypes.ProjectMember> projectMembers = new ProjectMemberF().get((pm) -> pm.getProject_id().equals(projectId)); // Get all the project members
 

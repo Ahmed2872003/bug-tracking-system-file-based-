@@ -7,22 +7,25 @@ package modules;
 import java.util.ArrayList;
 import utils.fileObj.CRUD.BugF;
 
-public class Developer extends dataTypes.User {
+public class Developer extends dataTypes.User implements IDeveloper {
 
     public Developer(final Integer id, final String name, final String email, final String password, final String role) {
         super(id, name, email, password, role);
     }
 
+    @Override
     public ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) throws Exception {
         return new BugF().get((bug) -> bug.getDeveloper_id() != null, (bug) -> bug.getDeveloper_id().equals(getId()), (bug) -> bug.getProject_id().equals(projectId));
     }
 
+    @Override
     public void changeBugStatus(Integer bugId) throws Exception {
         dataTypes.Bug bug = new BugF().getByID(bugId);
         
         new BugF().update(new Object[][]{{"status", !bug.getStatus()}}, (b) -> b.getId().equals(bugId));
     }
 
+    @Override
     public void sendEmailToTester(String testerEmail, Integer bugId) {
         String message
                 = "Developer with data\n"

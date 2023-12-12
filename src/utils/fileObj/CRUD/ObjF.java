@@ -35,7 +35,7 @@ abstract public class ObjF<T extends Identifiable> {
             }
         }
 
-        Path path = Paths.get("storage\\" + name + ".txt");
+        path = Paths.get("storage\\" + name + ".txt");
 
         file = new File(path.toString());
 
@@ -215,7 +215,7 @@ abstract public class ObjF<T extends Identifiable> {
             closeInput();
         }
 
-        return res;
+            return res;
     }
 
     public int delete(Predicate<T>... predicates) throws Exception {        
