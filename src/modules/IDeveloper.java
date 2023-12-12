@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public interface IDeveloper {
 
-    ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) throws Exception;
+    ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId);
 
-    void changeBugStatus(Integer bugId) throws Exception;
+    void changeBugStatus(Integer bugId);
 
     void sendEmailToTester(String testerEmail, Integer bugId);
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package auth;
+package authJFrame;
 
 /**
  *
@@ -228,14 +228,8 @@ public class Login extends javax.swing.JFrame {
 
     public static void main(String args[]) {
 
-        try {
             new Login().setVisible(true);
 
-            
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
 
     }
 

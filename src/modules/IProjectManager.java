@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 
 public interface IProjectManager {
-    ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception;
+    ArrayList<dataTypes.Bug> monitorBugs(Integer projectId);
     
-    ArrayList<Object[]> checkTesterPerformance(Integer projectId) throws Exception;
+    ArrayList<Object[]> checkTesterPerformance(Integer projectId);
     
-    ArrayList<Object[]> checkDevPerformance(Integer projectId) throws Exception;
+    ArrayList<Object[]> checkDevPerformance(Integer projectId);
 }

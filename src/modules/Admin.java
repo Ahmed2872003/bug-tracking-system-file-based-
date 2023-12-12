@@ -21,35 +21,68 @@ public class Admin extends dataTypes.User implements IAdmin {
     }
 
     @Override
-    public ArrayList<dataTypes.Bug> viewAllBugs(Integer projectId) throws Exception {
-        return new BugF().get((bug) -> bug.getProject_id().equals(projectId));
+    public ArrayList<dataTypes.Bug> viewAllBugs(Integer projectId) {
+        ArrayList<dataTypes.Bug> res = new ArrayList<dataTypes.Bug>();
+
+        try {
+            res = new BugF().get((bug) -> bug.getProject_id().equals(projectId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return res;
+
     }
 
     @Override
-    public dataTypes.User addUser(dataTypes.User user) throws Exception {
-        return new UserF().create(user);
-    }
-    
-    @Override
-    public void deleteUser(Integer userId) throws Exception {
-        new UserF().delete((user) -> user.getId().equals(userId));
-    }
-    
-    
-    @Override
-    public void addUserToProject(Integer userId, Integer projectId) throws Exception{
-        new ProjectMemberF().create(new ProjectMember(projectId, userId));
-    }
-    
-    @Override
-    public void deleteUserFromProject(Integer memberId, Integer projectId) throws Exception{
-        new ProjectMemberF().delete((pm)-> pm.getMember_id().equals(memberId) && pm.getProject_id().equals(projectId));
+    public dataTypes.User addUser(dataTypes.User user) {
+        dataTypes.User res = null;
+        try {
+            res = new UserF().create(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     @Override
-    public void updateUser(Object newData[][], Integer userId) throws Exception {
-        new UserF().update(newData, (user) -> user.getId().equals(userId));
+    public void deleteUser(Integer userId) {
+        try {
+            new UserF().delete((user) -> user.getId().equals(userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-    
+    @Override
+    public void addUserToProject(Integer userId, Integer projectId) {
+        try {
+            new ProjectMemberF().create(new ProjectMember(projectId, userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void deleteUserFromProject(Integer memberId, Integer projectId) {
+        try {
+            new ProjectMemberF().delete((pm) -> pm.getMember_id().equals(memberId) && pm.getProject_id().equals(projectId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void updateUser(Object newData[][], Integer userId) {
+        try {
+            new UserF().update(newData, (user) -> user.getId().equals(userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

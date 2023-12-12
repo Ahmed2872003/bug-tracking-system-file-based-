@@ -10,15 +10,15 @@ import java.util.ArrayList;
 
 public interface IAdmin {
 
-    ArrayList<dataTypes.Bug> viewAllBugs(Integer projectId) throws Exception;
+    ArrayList<dataTypes.Bug> viewAllBugs(Integer projectId);
 
-    dataTypes.User addUser(dataTypes.User user) throws Exception;
+    dataTypes.User addUser(dataTypes.User user);
 
-    void deleteUser(Integer userId) throws Exception;
+    void deleteUser(Integer userId);
 
-    void addUserToProject(Integer userId, Integer projectId) throws Exception;
+    void addUserToProject(Integer userId, Integer projectId);
 
-    void deleteUserFromProject(Integer memberId, Integer projectId) throws Exception;
+    void deleteUserFromProject(Integer memberId, Integer projectId);
 
-    void updateUser(Object newData[][], Integer userId) throws Exception;
+    void updateUser(Object newData[][], Integer userId);
 }
