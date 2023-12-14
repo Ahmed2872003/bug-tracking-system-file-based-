@@ -27,7 +27,9 @@ public class User extends dataTypes implements Serializable, Identifiable{
         this.role = role;
     }
     
-    public User(){}
+    public User(User u){
+        this(u.getId(), u.getName(), u.getEmail(), u.getPassword(), u.getRole());
+    }
 
     public boolean is(String role){
         return this.role.equals(role);

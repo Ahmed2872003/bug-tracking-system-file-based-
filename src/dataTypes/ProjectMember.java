@@ -19,6 +19,12 @@ public class ProjectMember extends dataTypes implements Serializable, utils.Iden
         this.project_id = project_id;
         this.member_id = member_id;
     }
+    
+    public ProjectMember(ProjectMember pm){
+        this(pm.getProject_id(), pm.getMember_id());
+    }
+    
+    
     @Override
     public Integer getId(){ return id; }
     public Integer getProject_id() { return project_id; }

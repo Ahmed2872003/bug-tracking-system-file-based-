@@ -16,6 +16,10 @@ public class Project extends dataTypes implements Serializable, utils.Identifiab
         this.admin_id = admin_id;
     }
     
+    public Project(Project p){
+        this(p.getId(), p.getName(), p.getAdmin_id());
+    }
+    
     @Override
     public Integer getId(){ return id; }
     public String getName() { return name; }

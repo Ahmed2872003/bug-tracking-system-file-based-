@@ -40,6 +40,11 @@ public class Bug extends dataTypes implements Serializable, utils.Identifiable {
         this.img = img;
     }
 
+    public Bug(Bug b){
+        this(b.getId(), b.getName(), b.getType(), b.getPriority(), b.getLevel(), b.getProject_id(), b.getDeveloper_id(), b.getTester_id(), b.getImgPath());
+    }
+    
+    
     @Override
     public Integer getId() {
         return id;
