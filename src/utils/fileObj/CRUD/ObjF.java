@@ -218,6 +218,9 @@ abstract public class ObjF<T extends Identifiable> {
             return res;
     }
 
+    
+    
+    
     public int delete(Predicate<T>... predicates) throws Exception {        
         
         int c = 0;

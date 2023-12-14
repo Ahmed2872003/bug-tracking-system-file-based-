@@ -19,31 +19,24 @@ public class Tester extends dataTypes.User implements ITester {
     }
 
     @Override
-    public dataTypes.Bug defineBug(final String name, final String type, final String priority, final String level, final Integer project_id) {
+    public dataTypes.Bug defineBug(final String name, final String type, final String priority, final String level, final Integer project_id) throws Exception {
 
         dataTypes.Bug bug = new dataTypes.Bug(null, name, type, priority, level, project_id, null, getId(), null);
 
-        try {
-            bug = new BugF().create(bug);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bug = new BugF().create(bug);
 
         return bug;
     }
 
     @Override
-    public void assignBugToDev(Integer bugId, Integer developerId) {
-        try {
-            new BugF().update(new Object[][]{{"developer_id", developerId}}, (b) -> b.getId().equals(bugId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void assignBugToDev(Integer bugId, Integer developerId) throws Exception {
+
+        new BugF().update(new Object[][]{{"developer_id", developerId}}, (b) -> b.getId().equals(bugId));
 
     }
 
     @Override
-    public void attachScreenshotOfBug(dataTypes.Bug bug, String screenShotPath) {
+    public void attachScreenshotOfBug(dataTypes.Bug bug, String screenShotPath) throws Exception {
 
         if (bug.getImgPath() != null && screenShotPath.equals(bug.getImgPath())) {
             return;
@@ -57,58 +50,47 @@ public class Tester extends dataTypes.User implements ITester {
 
         Path fNamePath = srcImgPath.getFileName();
 
-        try {
-            if (fNamePath != null && Files.isRegularFile(srcImgPath)) {
-                String[] fNameWExt = fNamePath.toString().split("\\."); // { "imgage", "png" }
+        if (fNamePath != null && Files.isRegularFile(srcImgPath)) {
+            String[] fNameWExt = fNamePath.toString().split("\\."); // { "imgage", "png" }
 
-                generatedImgName = fNameWExt[0] + '-' + UUID.randomUUID().toString() + '.' + fNameWExt[1]; // make the name like this temp-e2234-213213-421412.ext
+            generatedImgName = fNameWExt[0] + '-' + UUID.randomUUID().toString() + '.' + fNameWExt[1]; // make the name like this temp-e2234-213213-421412.ext
 
-                File dirName = new File("Images");
+            File dirName = new File("Images");
 
-                if (dirName.isDirectory() == false) {
-                    Files.createDirectory(Paths.get(dirName.getPath())); // create the directory if not exist
-                }
-
-                destinitionPath = Paths.get(dirName.getPath() + "\\" + generatedImgName);
-
-                Files.copy(srcImgPath, destinitionPath); // copies the file from srcPath to dest path
-
-                if (bug.getImgPath() != null && Files.isRegularFile(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()))) { // delete the previous screenshot of a bug
-                    Files.delete(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()));
-                }
-
-                new BugF().update(new Object[][]{{"img", generatedImgName}}, (b) -> b.getId().equals(bug.getId())); // update the bug with attached screenshot
-
-                bug.setImg(generatedImgName);
-
+            if (dirName.isDirectory() == false) {
+                Files.createDirectory(Paths.get(dirName.getPath())); // create the directory if not exist
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            destinitionPath = Paths.get(dirName.getPath() + "\\" + generatedImgName);
+
+            Files.copy(srcImgPath, destinitionPath); // copies the file from srcPath to dest path
+
+            if (bug.getImgPath() != null && Files.isRegularFile(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()))) { // delete the previous screenshot of a bug
+                Files.delete(Paths.get(dirName.getPath() + "\\" + bug.getImgPath()));
+            }
+
+            new BugF().update(new Object[][]{{"img", generatedImgName}}, (b) -> b.getId().equals(bug.getId())); // update the bug with attached screenshot
+
+            bug.setImg(generatedImgName);
+
         }
 
     }
 
     @Override
-    public void updateBug(Object newData[][], Integer bugId) {
-        try {
-            new BugF().update(newData, (bug) -> bug.getId().equals(bugId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void updateBug(Object newData[][], Integer bugId) throws Exception {
+
+        new BugF().update(newData, (bug) -> bug.getId().equals(bugId));
 
     }
 
     @Override
-    public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) {
-        
+    public ArrayList<dataTypes.Bug> monitorBugs(Integer projectId) throws Exception {
+
         ArrayList<dataTypes.Bug> res = new ArrayList<dataTypes.Bug>();
-        
-        try{
-            res =  new BugF().get((bug) -> bug.getProject_id().equals(projectId));
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+
+        res = new BugF().get((bug) -> bug.getProject_id().equals(projectId));
+
         return res;
     }
 

@@ -26,7 +26,7 @@ public class Email {
         final String username = "bugtrackingsystem6@gmail.com";
         final String password = "rcwr nilw ifpx btsv";
 
-        // Setting up mail server 
+        // Setting up mail server
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");

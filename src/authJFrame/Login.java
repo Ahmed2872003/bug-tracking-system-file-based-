@@ -177,7 +177,7 @@ public class Login extends javax.swing.JFrame {
                 throw new Exception("Both fields mustn't be empty.");
             }
 
-            ArrayList<dataTypes.User> usersList = new UserF().get((u->u.getEmail().equals(email)));
+            ArrayList<dataTypes.User> usersList = new UserF().get((u -> u.getEmail().equals(email)));
 
             if (usersList.isEmpty()) {
                 throw new Exception("Email isn't exist.");
@@ -186,16 +186,16 @@ public class Login extends javax.swing.JFrame {
             if (!password.equals(usersList.get(0).getPassword())) {
                 throw new Exception("Incorrect password.");
             }
-            
+
             dataTypes.User user = usersList.get(0);
-            
-            switch(user.getRole()){
-                case "Admin":{
+
+            switch (user.getRole()) {
+                case "Admin": {
                     SessionStorage.setData(new Admin(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
                     new UserJFrames.AdminPanelJFrame().setVisible(true);
                     return;
                 }
-                    
+
                 case "Tester":
                     SessionStorage.setData(new Tester(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole()));
                     break;
@@ -225,13 +225,6 @@ public class Login extends javax.swing.JFrame {
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
         new CreateUserJFrame(false).setVisible(true);
     }//GEN-LAST:event_jButton3MouseClicked
-
-    public static void main(String args[]) {
-
-            new Login().setVisible(true);
-        
-
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

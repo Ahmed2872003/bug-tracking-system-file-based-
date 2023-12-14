@@ -14,30 +14,21 @@ public class Developer extends dataTypes.User implements IDeveloper {
     }
 
     @Override
-    public ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) {
+    public ArrayList<dataTypes.Bug> getAssignedBugs(Integer projectId) throws Exception {
+        
         ArrayList<dataTypes.Bug> res = new ArrayList<dataTypes.Bug>();
 
-        try {
-            res = new BugF().get((bug) -> bug.getDeveloper_id() != null, (bug) -> bug.getDeveloper_id().equals(getId()), (bug) -> bug.getProject_id().equals(projectId));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        res = new BugF().get((bug) -> bug.getDeveloper_id() != null, (bug) -> bug.getDeveloper_id().equals(getId()), (bug) -> bug.getProject_id().equals(projectId));
 
         return res;
     }
 
     @Override
-    public void changeBugStatus(Integer bugId) {
+    public void changeBugStatus(Integer bugId) throws Exception {
 
-        try {
-            dataTypes.Bug bug = new BugF().getByID(bugId);
+        dataTypes.Bug bug = new BugF().getByID(bugId);
 
-            new BugF().update(new Object[][]{{"status", !bug.getStatus()}}, (b) -> b.getId().equals(bugId));
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new BugF().update(new Object[][]{{"status", !bug.getStatus()}}, (b) -> b.getId().equals(bugId));
 
     }
 
